@@ -1,4 +1,4 @@
-import { PublicClientApplication, InteractionRequiredAuthError, EventType } from '@azure/msal-browser';
+import { PublicClientApplication, InteractionRequiredAuthError, BrowserAuthError, EventType } from '@azure/msal-browser';
 import { MicrosoftFiles } from '../microsoft-files.js';
 import { MicrosoftAccount } from './microsoft-account.js';
 import { MicrosoftWorkspace } from './microsoft-workspace.js';
@@ -14,6 +14,7 @@ window.NaraMicrosoft = { FileLifecycle: MicrosoftFileLifecycle, create() {
     });
     const auth = new MicrosoftAccount(client, {
       interactionRequired: error => error instanceof InteractionRequiredAuthError,
+      popupBlocked: error => error instanceof BrowserAuthError && ['popup_window_error', 'empty_window_error'].includes(error.errorCode),
       accountChanged: EventType.ACCOUNT_REMOVED
     });
     window.addEventListener('focus', () => auth.synchronize());

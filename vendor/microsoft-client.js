@@ -15701,14 +15701,17 @@
   var logoutKey = "narabizagui.microsoft.logout.v1";
   var reference = (account) => account && ["homeAccountId", "localAccountId", "tenantId"].every((k) => typeof account[k] === "string" && account[k].length > 0 && account[k].length <= 1024) ? { homeAccountId: account.homeAccountId, localAccountId: account.localAccountId, tenantId: account.tenantId } : null;
   var MicrosoftAccount = class {
-    constructor(client, { interactionRequired: interactionRequired2, accountChanged, storage = () => window.sessionStorage, events = globalThis.window }) {
+    constructor(client, { interactionRequired: interactionRequired2, popupBlocked = () => false, accountChanged, storage = () => window.sessionStorage, events = globalThis.window }) {
       this.client = client;
       this.storage = storage;
       this.events = events;
       this.interactionRequired = interactionRequired2;
+      this.popupBlocked = popupBlocked;
       this.account = null;
       this.generation = 0;
       this.listeners = /* @__PURE__ */ new Set();
+      this.redirectFallback = null;
+      this.redirected = false;
       this.selection = this.readSelection();
       if (events) events.addEventListener("storage", (event) => {
         if (event.key === logoutKey) {
@@ -15721,6 +15724,14 @@
       this.initialized = this.clientReady.then(async () => {
         client.enableAccountStorageEvents?.();
         client.addEventCallback(() => this.synchronize(), [accountChanged]);
+        const returned = await client.handleRedirectPromise?.().catch(() => null);
+        if (returned?.account) {
+          this.redirected = true;
+          this.select(returned.account);
+          this.update(returned.account, "connected");
+          client.setActiveAccount(returned.account);
+          return;
+        }
         await this.restore();
       });
     }
@@ -15783,10 +15794,21 @@
       } catch {
       }
     }
+    async interact(popup, redirect) {
+      try {
+        return await popup();
+      } catch (error) {
+        if (!this.popupBlocked(error)) throw error;
+        if (!await this.redirectFallback?.()) throw problem("MICROSOFT_POPUP_BLOCKED", "El navegador bloque\xF3 la ventana de Microsoft. Permite ventanas emergentes para este sitio, o guarda el diagrama y vuelve a intentar para continuar en esta pesta\xF1a.");
+        await redirect();
+        return new Promise(() => {
+        });
+      }
+    }
     async connect() {
       await this.initialized;
-      const generation = this.generation;
-      const result = await this.client.loginPopup({ scopes: FILE_SCOPES, prompt: "select_account" });
+      const generation = this.generation, request = { scopes: FILE_SCOPES, prompt: "select_account" };
+      const result = await this.interact(() => this.client.loginPopup(request), () => this.client.loginRedirect(request));
       if (generation !== this.generation) throw problem("ACCOUNT_CHANGED", "La conexi\xF3n cambi\xF3 durante el inicio de sesi\xF3n. Vuelve a conectar tu cuenta.");
       this.select(result.account);
       this.update(result.account, "connected");
@@ -15808,7 +15830,7 @@
         }
         this.synchronize();
         if (generation !== this.generation) throw problem("ACCOUNT_CHANGED", "La cuenta Microsoft cambi\xF3. Conecta de nuevo.");
-        result = await this.client.acquireTokenPopup({ scopes, account });
+        result = await this.interact(() => this.client.acquireTokenPopup({ scopes, account }), () => this.client.acquireTokenRedirect({ scopes, account }));
       }
       this.synchronize();
       if (generation !== this.generation || identity(result.account) !== identity(account)) throw problem("ACCOUNT_CHANGED", "La cuenta Microsoft cambi\xF3. Conecta de nuevo.");
@@ -16416,6 +16438,7 @@
     });
     const auth = new MicrosoftAccount(client, {
       interactionRequired: (error) => error instanceof InteractionRequiredAuthError,
+      popupBlocked: (error) => error instanceof BrowserAuthError && ["popup_window_error", "empty_window_error"].includes(error.errorCode),
       accountChanged: EventType.ACCOUNT_REMOVED
     });
     window.addEventListener("focus", () => auth.synchronize());

@@ -163,3 +163,78 @@ test('malformed tab identity cannot select the first arbitrary cached account',a
  const f=fixture(),s=tabSelection();s.setItem('narabizagui.microsoft.account.v1',JSON.stringify({homeAccountId:'generic-home'}));
  const auth=new MicrosoftAccount(f.client(),{...settings,storage:()=>s});await auth.initialized;assert.equal(auth.account,null);
 });
+
+const blocked = Object.assign(new Error('generic popup blocked'), { code: 'popup_window_error' });
+const popupSettings = { ...settings, popupBlocked: error => error.code === 'popup_window_error' };
+const flushed = () => new Promise(resolve => setImmediate(resolve));
+
+test('a blocked popup continues the sign-in by redirect only when the editor allows leaving the page', async () => {
+  for (const allowed of [true, false]) {
+    const f = fixture(null), c = f.client(), redirects = [];
+    c.loginPopup = async () => { c.calls.login++; throw blocked; };
+    c.loginRedirect = async request => { redirects.push(request); };
+    const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
+    auth.redirectFallback = async () => allowed;
+    const pending = auth.connect(); let failure = null; pending.catch(error => { failure = error; });
+    await flushed(); await flushed();
+    if (allowed) { assert.deepEqual(redirects.map(r => r.prompt), ['select_account']); assert.equal(failure, null); }
+    else { assert.equal(redirects.length, 0); assert.equal(failure?.code, 'MICROSOFT_POPUP_BLOCKED'); }
+    assert.equal(auth.account, null);
+  }
+});
+
+test('cancelled or failed popups never fall back to leaving the page', async () => {
+  const f = fixture(null), c = f.client(); let redirected = 0, asked = 0;
+  c.loginPopup = async () => { throw Object.assign(new Error('generic cancel'), { code: 'user_cancelled', errorCode: 'user_cancelled' }); };
+  c.loginRedirect = async () => { redirected++; };
+  const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
+  auth.redirectFallback = async () => { asked++; return true; };
+  await assert.rejects(auth.connect(), error => error.errorCode === 'user_cancelled');
+  assert.equal(redirected + asked, 0);
+});
+
+test('returning from a redirect sign-in connects that account without a silent restore', async () => {
+  const f = fixture(other), c = f.client(), changes = [];
+  c.handleRedirectPromise = async () => { f.shared.accounts.push(user); return result(user); };
+  const auth = new MicrosoftAccount(c, popupSettings); auth.onChange(change => changes.push(change));
+  await auth.initialized;
+  assert.equal(auth.account, user); assert.equal(auth.redirected, true);
+  assert.deepEqual(changes.map(change => change.reason), ['connected']);
+  assert.equal(f.shared.active, user); assert.equal(c.calls.silent, 0);
+});
+
+test('a failed redirect response leaves the normal restore path intact', async () => {
+  const f = fixture(), c = f.client();
+  c.handleRedirectPromise = async () => { throw new Error('generic redirect failure'); };
+  const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
+  assert.equal(auth.account, user); assert.equal(auth.redirected, false); assert.equal(c.calls.silent, 1);
+});
+
+test('site authorization uses a token redirect when its popup is blocked', async () => {
+  const f = fixture(), c = f.client(), redirects = [];
+  const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
+  c.acquireTokenSilent = async () => { throw Object.assign(new Error('generic consent'), { code: 'interaction_required' }); };
+  c.acquireTokenPopup = async () => { throw blocked; };
+  c.acquireTokenRedirect = async request => { redirects.push(request); };
+  auth.redirectFallback = async () => true;
+  auth.token(['generic.scope'], true).catch(() => {});
+  await flushed(); await flushed();
+  assert.deepEqual(redirects, [{ scopes: ['generic.scope'], account: user }]);
+});
+
+test('the editor refuses a sign-in redirect while edits or property text could be lost', async () => {
+  const element = () => ({ hidden: false, value: '', textContent: '', classList: { toggle() {} }, setAttribute() {}, querySelectorAll: () => [], replaceChildren() {}, addEventListener() {} });
+  const f = fixture(null), auth = f.account(f.client()); await auth.initialized;
+  const prompts = [];
+  const context = {
+    window: { NaraMicrosoft: { create: () => ({ auth, files: {}, workspace: { read: () => ({ last: null }), stamp: () => ({}), resume: async () => false } }) }, NaraPropertyDraftPending: () => context.draft },
+    byId: element, browserFiles: { handle: null, name: 'Generic.bpmn' }, saving: false, dirty: false, draft: false, status() {},
+    confirm: text => { prompts.push(text); return true; }
+  };
+  vm.runInNewContext(await readFile(new URL('../microsoft-ui.js', import.meta.url), 'utf8'), context);
+  context.dirty = true; assert.equal(await auth.redirectFallback(), false);
+  context.dirty = false; context.draft = true; assert.equal(await auth.redirectFallback(), false);
+  assert.equal(prompts.length, 0);
+  context.draft = false; assert.equal(await auth.redirectFallback(), true);
+  assert.equal(prompts.length, 1); assert.match(prompts[0], /esta pestaña/);
+});

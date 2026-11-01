@@ -16,6 +16,10 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
+## Versión 0.11.2
+
+- Si el navegador bloquea la ventana de inicio de sesión de Microsoft (navegadores integrados o bloqueadores de ventanas emergentes), el editor ofrece continuar en la misma pestaña y vuelve a NaraBizagui al terminar. Solo lo permite cuando no hay cambios sin guardar ni texto de Propiedades pendiente.
+
 ## Versión 0.11.1
 
 - Las rutas automáticas cruzan los separadores de carril perpendicularmente y reservan al menos 16 px para tramos paralelos y codos. Los recorridos manuales se conservan; `quality` informa `ROUTE_LANE_BORDER_CLEARANCE` y propone un recálculo local que mantiene los anclajes.

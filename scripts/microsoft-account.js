@@ -7,9 +7,10 @@ const reference = account => account && ['homeAccountId','localAccountId','tenan
 
 // MSAL owns the shared token cache; only the selected identity belongs to a tab.
 export class MicrosoftAccount {
-  constructor(client, { interactionRequired, accountChanged, storage = () => window.sessionStorage, events = globalThis.window }) {
-    this.client = client; this.storage = storage; this.events = events; this.interactionRequired = interactionRequired;
+  constructor(client, { interactionRequired, popupBlocked = () => false, accountChanged, storage = () => window.sessionStorage, events = globalThis.window }) {
+    this.client = client; this.storage = storage; this.events = events; this.interactionRequired = interactionRequired; this.popupBlocked = popupBlocked;
     this.account = null; this.generation = 0; this.listeners = new Set();
+    this.redirectFallback = null; this.redirected = false;
     this.selection = this.readSelection();
     if (events) events.addEventListener('storage', event => {
       if (event.key === logoutKey) { this.generation++; this.select(null); this.update(null, 'disconnected'); }
@@ -18,6 +19,13 @@ export class MicrosoftAccount {
     this.initialized = this.clientReady.then(async () => {
       client.enableAccountStorageEvents?.();
       client.addEventCallback(() => this.synchronize(), [accountChanged]);
+      // A sign-in completed in this tab by redirect returns here before any restore.
+      const returned = await client.handleRedirectPromise?.().catch(() => null);
+      if (returned?.account) {
+        this.redirected = true; this.select(returned.account); this.update(returned.account, 'connected');
+        client.setActiveAccount(returned.account);
+        return;
+      }
       await this.restore();
     });
   }
@@ -54,10 +62,21 @@ export class MicrosoftAccount {
       if (generation === this.generation && this.cached(account) && identity(result.account) === identity(account)) { this.select(result.account); this.update(result.account, 'restored'); }
     } catch { /* Startup never opens a popup. */ }
   }
+  async interact(popup, redirect) {
+    try { return await popup(); }
+    catch (error) {
+      if (!this.popupBlocked(error)) throw error;
+      // Embedded browsers and popup blockers may refuse the window. Leaving the
+      // page is only allowed when the editor confirms nothing would be lost.
+      if (!await this.redirectFallback?.()) throw problem('MICROSOFT_POPUP_BLOCKED', 'El navegador bloqueó la ventana de Microsoft. Permite ventanas emergentes para este sitio, o guarda el diagrama y vuelve a intentar para continuar en esta pestaña.');
+      await redirect();
+      return new Promise(() => {}); // The page is navigating to Microsoft.
+    }
+  }
   async connect() {
     await this.initialized;
-    const generation = this.generation;
-    const result = await this.client.loginPopup({ scopes: FILE_SCOPES, prompt: 'select_account' });
+    const generation = this.generation, request = { scopes: FILE_SCOPES, prompt: 'select_account' };
+    const result = await this.interact(() => this.client.loginPopup(request), () => this.client.loginRedirect(request));
     if (generation !== this.generation) throw problem('ACCOUNT_CHANGED', 'La conexión cambió durante el inicio de sesión. Vuelve a conectar tu cuenta.');
     this.select(result.account); this.update(result.account, 'connected');
     this.client.setActiveAccount(result.account); // Default SSO choice for new tabs, not other open documents.
@@ -76,7 +95,7 @@ export class MicrosoftAccount {
       }
       this.synchronize();
       if (generation !== this.generation) throw problem('ACCOUNT_CHANGED', 'La cuenta Microsoft cambió. Conecta de nuevo.');
-      result = await this.client.acquireTokenPopup({ scopes, account });
+      result = await this.interact(() => this.client.acquireTokenPopup({ scopes, account }), () => this.client.acquireTokenRedirect({ scopes, account }));
     }
     this.synchronize();
     if (generation !== this.generation || identity(result.account) !== identity(account)) throw problem('ACCOUNT_CHANGED', 'La cuenta Microsoft cambió. Conecta de nuevo.');

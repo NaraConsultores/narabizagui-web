@@ -226,12 +226,18 @@
     location:()=>{const last=workspace.read().last,handle=browserFiles.handle;if(handle?.storageKind!=='microsoft')return'Microsoft';const provider=last?.id===handle.itemId&&last.provider==='sharepoint'?'SharePoint':'OneDrive';const path=handle.parent?.path?.split('root:')[1];return provider+(path?' · '+path:handle.parent?.name?' · '+handle.parent.name:'');},
     versions:async(nextLink=null)=>{const handle=browserFiles.handle;if(handle?.storageKind!=='microsoft')throw Error('El archivo actual no está en Microsoft.');const result=await cloud.versions(handle,nextLink);if(browserFiles.handle!==handle)throw Error('El archivo cambió durante la consulta. Abre de nuevo su información.');return result;}
   };
+  // Without a popup, sign-in continues in this tab only when no edit can be lost.
+  auth.redirectFallback = async () => {
+    if (dirty || saving || window.NaraPropertyDraftPending()) return false;
+    return confirm('El navegador no permitió abrir la ventana de Microsoft. ¿Continuar el inicio de sesión en esta pestaña? Al terminar volverás a NaraBizagui y podrás repetir la acción.');
+  };
   auth.onChange(({ previous, account, reason }) => {
     if (previous && previous !== account) detachCloud();
     reset(); controls();
     if (dialog.open && !account) message(reason === 'expired' ? 'Microsoft requiere iniciar sesión de nuevo. Tu diagrama sigue abierto.' : 'La conexión se cerró o cambió en este navegador. Tu diagrama sigue abierto.');
   });
   Promise.all([auth.initialized, window.NaraStartup]).then(async () => {
+    if (auth.redirected) status('Cuenta Microsoft conectada. Abre o guarda tu BPMN desde Microsoft.');
     // An explicit new-document link must never resume an existing cloud file.
     if(new URLSearchParams(location.search).get('nuevo')==='1'){
       workspace.clearCurrent?.();
