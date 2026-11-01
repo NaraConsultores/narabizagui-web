@@ -15799,8 +15799,7 @@
         return await popup();
       } catch (error) {
         if (!this.popupBlocked(error)) throw error;
-        if (!await this.redirectFallback?.()) throw problem("MICROSOFT_POPUP_BLOCKED", "El navegador bloque\xF3 la ventana de Microsoft. Permite ventanas emergentes para este sitio, o guarda el diagrama y vuelve a intentar para continuar en esta pesta\xF1a.");
-        await redirect();
+        if (!await this.redirectFallback?.(redirect)) throw problem("MICROSOFT_POPUP_BLOCKED", "El navegador bloque\xF3 la ventana de Microsoft. Termina la edici\xF3n o el guardado en curso y vuelve a intentar.");
         return new Promise(() => {
         });
       }

@@ -45,7 +45,7 @@ const modeler = new BpmnJS({
 });
 window.bpmnModeler = modeler;
 const semanticProperties = window.NaraBpmnProperties.mount(modeler, byId('semanticFields'), () => basePropertyDraftPending());
-window.NaraAppVersion = '0.11.2';
+window.NaraAppVersion = '0.11.3';
 window.NaraAppBuild = document.querySelector('meta[name=narabizagui-build]')?.content || 'unknown';
 window.diagramReady = false;
 window.diagramError = null;
@@ -893,7 +893,7 @@ document.addEventListener('keydown', event => {
   if (event.key.toLowerCase() === 'z') { event.preventDefault(); modeler.get('commandStack')[event.shiftKey ? 'redo' : 'undo'](); }
   if (event.key.toLowerCase() === 'y') { event.preventDefault(); modeler.get('commandStack').redo(); }
 });
-window.addEventListener('beforeunload', event => { if (dirty||window.NaraPropertyDraftPending?.()) { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (!window.NaraMicrosoftRedirect && (dirty||window.NaraPropertyDraftPending?.())) { event.preventDefault(); event.returnValue = ''; } });
 window.addEventListener('resize', () => modeler.get('canvas').resized());
 window.addEventListener('focus', () => pollFile());
 document.addEventListener('visibilitychange', () => {if(document.visibilityState==='visible')pollFile();});

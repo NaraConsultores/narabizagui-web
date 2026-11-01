@@ -16,6 +16,10 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
+## Versión 0.11.3
+
+- Si el navegador no permite la ventana de inicio de sesión de Microsoft, el editor continúa automáticamente en la misma pestaña, sin preguntas ni avisos. Conserva el diagrama abierto, incluidos los cambios sin guardar, y al volver reabre el diálogo de Microsoft donde estaba.
+
 ## Versión 0.11.2
 
 - Si el navegador bloquea la ventana de inicio de sesión de Microsoft (navegadores integrados o bloqueadores de ventanas emergentes), el editor ofrece continuar en la misma pestaña y vuelve a NaraBizagui al terminar. Solo lo permite cuando no hay cambios sin guardar ni texto de Propiedades pendiente.

@@ -168,14 +168,14 @@ const blocked = Object.assign(new Error('generic popup blocked'), { code: 'popup
 const popupSettings = { ...settings, popupBlocked: error => error.code === 'popup_window_error' };
 const flushed = () => new Promise(resolve => setImmediate(resolve));
 
-test('a blocked popup continues the sign-in by redirect only when the editor allows leaving the page', async () => {
+test('a blocked popup continues the sign-in in this tab automatically when the editor can preserve its state', async () => {
   for (const allowed of [true, false]) {
     const f = fixture(null), c = f.client(), redirects = [];
     c.loginPopup = async () => { c.calls.login++; throw blocked; };
     c.loginRedirect = async request => { redirects.push(request); };
     const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
-    auth.redirectFallback = async () => allowed;
-    const pending = auth.connect(); let failure = null; pending.catch(error => { failure = error; });
+    auth.redirectFallback = async redirect => { if (allowed) await redirect(); return allowed; };
+    let failure = null; auth.connect().catch(error => { failure = error; });
     await flushed(); await flushed();
     if (allowed) { assert.deepEqual(redirects.map(r => r.prompt), ['select_account']); assert.equal(failure, null); }
     else { assert.equal(redirects.length, 0); assert.equal(failure?.code, 'MICROSOFT_POPUP_BLOCKED'); }
@@ -183,14 +183,13 @@ test('a blocked popup continues the sign-in by redirect only when the editor all
   }
 });
 
-test('cancelled or failed popups never fall back to leaving the page', async () => {
-  const f = fixture(null), c = f.client(); let redirected = 0, asked = 0;
+test('cancelled or failed popups never offer leaving the page', async () => {
+  const f = fixture(null), c = f.client(); let asked = 0;
   c.loginPopup = async () => { throw Object.assign(new Error('generic cancel'), { code: 'user_cancelled', errorCode: 'user_cancelled' }); };
-  c.loginRedirect = async () => { redirected++; };
   const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
-  auth.redirectFallback = async () => { asked++; return true; };
+  auth.redirectFallback = () => { asked++; return true; };
   await assert.rejects(auth.connect(), error => error.errorCode === 'user_cancelled');
-  assert.equal(redirected + asked, 0);
+  assert.equal(asked, 0);
 });
 
 test('returning from a redirect sign-in connects that account without a silent restore', async () => {
@@ -210,31 +209,69 @@ test('a failed redirect response leaves the normal restore path intact', async (
   assert.equal(auth.account, user); assert.equal(auth.redirected, false); assert.equal(c.calls.silent, 1);
 });
 
-test('site authorization uses a token redirect when its popup is blocked', async () => {
+test('site authorization continues by token redirect when its popup is blocked', async () => {
   const f = fixture(), c = f.client(), redirects = [];
   const auth = new MicrosoftAccount(c, popupSettings); await auth.initialized;
   c.acquireTokenSilent = async () => { throw Object.assign(new Error('generic consent'), { code: 'interaction_required' }); };
   c.acquireTokenPopup = async () => { throw blocked; };
   c.acquireTokenRedirect = async request => { redirects.push(request); };
-  auth.redirectFallback = async () => true;
+  auth.redirectFallback = async redirect => { await redirect(); return true; };
   auth.token(['generic.scope'], true).catch(() => {});
   await flushed(); await flushed();
   assert.deepEqual(redirects, [{ scopes: ['generic.scope'], account: user }]);
 });
 
-test('the editor refuses a sign-in redirect while edits or property text could be lost', async () => {
-  const element = () => ({ hidden: false, value: '', textContent: '', classList: { toggle() {} }, setAttribute() {}, querySelectorAll: () => [], replaceChildren() {}, addEventListener() {} });
-  const f = fixture(null), auth = f.account(f.client()); await auth.initialized;
-  const prompts = [];
-  const context = {
-    window: { NaraMicrosoft: { create: () => ({ auth, files: {}, workspace: { read: () => ({ last: null }), stamp: () => ({}), resume: async () => false } }) }, NaraPropertyDraftPending: () => context.draft },
-    byId: element, browserFiles: { handle: null, name: 'Generic.bpmn' }, saving: false, dirty: false, draft: false, status() {},
-    confirm: text => { prompts.push(text); return true; }
+function editorHarness(auth, overrides = {}) {
+  const elements = new Map(), storage = new Map(), accepted = [];
+  const element = id => {
+    if (!elements.has(id)) elements.set(id, { hidden: false, disabled: false, open: false, value: '', textContent: '', classList: { toggle() {} }, setAttribute() {}, querySelectorAll: () => [], replaceChildren() {}, addEventListener() {}, focus() {}, showModal() { this.open = true; } });
+    return elements.get(id);
   };
+  const context = {
+    window: { NaraMicrosoft: { create: () => ({ auth, files: {}, workspace: { read: () => ({ last: null, recent: [] }), stamp: () => ({}), resume: async () => false, favorites: () => [] } }) }, NaraPropertyDraftPending: () => context.draft, NaraStartup: Promise.resolve() },
+    byId: element, saving: false, dirty: false, draft: false, ready: true, standalone: true, loadingDiagram: false, filePolling: false, location: { search: '' },
+    browserFiles: { handle: null, name: 'Generic.bpmn', baseXml: '<saved/>', hash: 'generic-hash' },
+    modeler: { saveXML: async () => ({ xml: '<edited/>' }) },
+    sessionStorage: { getItem: key => storage.has(key) ? storage.get(key) : null, setItem: (key, value) => storage.set(key, value), removeItem: key => storage.delete(key) },
+    acceptBrowserSource: async (source, guard, view, base) => { accepted.push({ source, base }); return true; },
+    setDirty: value => { context.dirty = value; }, status: text => { context.statusText = text; },
+    confirm: () => { throw new Error('Native dialogs may be answered silently by embedded browsers'); },
+    ...overrides
+  };
+  return { context, element, storage, accepted };
+}
+
+test('the editor snapshots unsaved edits, leaves without prompting, and refuses only while text or a save is pending', async () => {
+  const f = fixture(null), auth = f.account(f.client()); await auth.initialized;
+  const { context, storage } = editorHarness(auth);
   vm.runInNewContext(await readFile(new URL('../microsoft-ui.js', import.meta.url), 'utf8'), context);
-  context.dirty = true; assert.equal(await auth.redirectFallback(), false);
-  context.dirty = false; context.draft = true; assert.equal(await auth.redirectFallback(), false);
-  assert.equal(prompts.length, 0);
-  context.draft = false; assert.equal(await auth.redirectFallback(), true);
-  assert.equal(prompts.length, 1); assert.match(prompts[0], /esta pestaña/);
+  let redirected = 0; const redirect = async () => { redirected++; assert.equal(context.window.NaraMicrosoftRedirect, true); };
+  context.draft = true; assert.equal(await auth.redirectFallback(redirect), false);
+  context.draft = false; context.saving = true; assert.equal(await auth.redirectFallback(redirect), false);
+  assert.equal(redirected, 0);
+  context.saving = false; context.dirty = true;
+  assert.equal(await auth.redirectFallback(redirect), true);
+  assert.equal(redirected, 1);
+  assert.deepEqual(JSON.parse([...storage.values()][0]), { mode: null, name: 'Generic.bpmn', xml: '<edited/>' });
+  const failing = async () => { throw new Error('generic navigation failure'); };
+  await assert.rejects(auth.redirectFallback(failing), /generic navigation failure/);
+  assert.equal(context.window.NaraMicrosoftRedirect, false); assert.equal(storage.size, 0);
+});
+
+test('returning from Microsoft restores unsaved edits over the reopened file and reopens the dialog', async () => {
+  const f = fixture(null), c = f.client();
+  c.handleRedirectPromise = async () => { f.shared.accounts.push(user); return result(user); };
+  const auth = new MicrosoftAccount(c, popupSettings);
+  const handle = { storageKind: 'local', name: 'Generic.bpmn' };
+  const { context, storage, accepted, element } = editorHarness(auth);
+  context.browserFiles.handle = handle;
+  storage.set('narabizagui.microsoft.redirect.v1', JSON.stringify({ mode: 'save', name: 'Generic.bpmn', xml: '<edited/>' }));
+  vm.runInNewContext(await readFile(new URL('../microsoft-ui.js', import.meta.url), 'utf8'), context);
+  await auth.initialized; for (let i = 0; i < 6; i++) await flushed();
+  assert.equal(accepted.length, 1);
+  assert.equal(accepted[0].source.xml, '<edited/>'); assert.equal(accepted[0].source.handle, handle);
+  assert.equal(accepted[0].base.xml, '<saved/>'); assert.equal(accepted[0].base.hash, 'generic-hash'); assert.equal(accepted[0].base.handle, handle);
+  assert.equal(context.dirty, true); assert.equal(storage.size, 0);
+  assert.equal(element('microsoftDialog').open, true);
+  assert.equal(element('msHeading').textContent, 'Guardar en Microsoft');
 });

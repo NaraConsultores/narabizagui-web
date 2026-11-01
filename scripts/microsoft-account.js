@@ -66,10 +66,9 @@ export class MicrosoftAccount {
     try { return await popup(); }
     catch (error) {
       if (!this.popupBlocked(error)) throw error;
-      // Embedded browsers and popup blockers may refuse the window. Leaving the
-      // page is only allowed when the editor confirms nothing would be lost.
-      if (!await this.redirectFallback?.()) throw problem('MICROSOFT_POPUP_BLOCKED', 'El navegador bloqueó la ventana de Microsoft. Permite ventanas emergentes para este sitio, o guarda el diagrama y vuelve a intentar para continuar en esta pestaña.');
-      await redirect();
+      // Embedded browsers and popup blockers may refuse the window. The editor
+      // then continues in this tab after preserving its state.
+      if (!await this.redirectFallback?.(redirect)) throw problem('MICROSOFT_POPUP_BLOCKED', 'El navegador bloqueó la ventana de Microsoft. Termina la edición o el guardado en curso y vuelve a intentar.');
       return new Promise(() => {}); // The page is navigating to Microsoft.
     }
   }
