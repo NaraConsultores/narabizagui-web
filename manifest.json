@@ -1,7 +1,7 @@
 {
-  "index.html": "f133bd773d29f1402491db6ba1899e9fbed1f14ef680695d3a5f1dd91057fea5",
-  "modelador.js": "36f4e717b6e934d3c5bc30430c45319dbd34b451c453b6b6dc6dc9d8d4018e36",
-  "modelador.css": "dbe2adedb14e60ba2add6e7415adbf32a5348a205f6d11b059b878742d8fc530",
+  "index.html": "89f99febbfb610d75d203d6ddee0dece0274fc777da13f0e7cba18b0f5e228a9",
+  "modelador.js": "c8c9776cfe5d19fb70ddd8cab16b3069cd79c40cd4e0cf1aad9cc5545e948075",
+  "modelador.css": "b0df8eb6350467bad695da223626ce3197e7f3ba8d113a4ffdee657ad0f23090",
   "archivos.js": "93bc8c358e9b4f56fdc77c8a5941bc4ae7fe398118e1c8a31b8eed78f5bf7812",
   "autoguardado.js": "0bd55020f202bea6db10b696e95374a2a5c946f92fd5c0a743e3f92556be82a5",
   "mcp-editor.js": "af41f2bb33e19f544d86b7fb2eca267b3d45419bf557ff281082ab32ea105a9b",
@@ -24,6 +24,7 @@
   "assets/favicon-nb.png": "3a52e8adae4d77c783900e7f9ba6281fe9dfb956095154594052f10e3f2a9e3c",
   "editor-visual.js": "9d538f5e7b22ada46cf848d79cc4d2779ff5f8d2355f426a48ac90555f195452",
   "tab-ownership.js": "95d96466274e1b518df5ec69df1e4c85d11600dc9240e1c9235e6f062746526d",
+  "editor-touch.js": "b49e0dbaf27ff22b4218207d7c2e224e8379f6781857bac02d7e672f47bfba28",
   "workspace.css": "74be7c6da43d3079c4df7c2e70eddb0fd525a119ae062e6bab7656204db90d5d",
   "workspace-ui.js": "d4a30e557a7ae49433e48631684e1d06782923d32c8afbd25bd235221d3c78bf",
   "instant-edit.js": "a5b55f83b2dea6746c323313990cf18b91993aa770aed446d433a6d188dca1a2",

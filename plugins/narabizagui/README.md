@@ -2,7 +2,7 @@
 
 La versión 0.11.0 incluye cuatro skills, scripts compartidos, diecisiete herramientas MCP y el contrato `visual-quality-v1`. El recorrido habitual es una consulta de preparación, un bloque de edición/presentación y una confirmación visual cuando corresponde. Conserva procesos completos, revisión obligatoria, prevalidación, idempotencia y Deshacer/Rehacer.
 
-## Novedades 0.11.0 (servidor 0.11.0, web 0.11.4)
+## Novedades 0.11.0 (servidor 0.11.0, web 0.11.5)
 
 - `matrix.activities` admite `width`/`height` y la matriz `activitySize`; sin ellos se conserva 100×80. Las conexiones de `links` admiten `as` y `label` para nombrar ramas Sí/No.
 - Un bloque rechazado devuelve `failedOperation` (índice, tipo, `elementId`, alias y `cell` en la matriz), también para `ROUTE_BLOCKED` y alias repetidos o reservados.
@@ -11,7 +11,7 @@ La versión 0.11.0 incluye cuatro skills, scripts compartidos, diecisiete herram
 - `clear` conserva el nombre de la hoja y los IDs de colaboración y proceso (mantiene un participante vacío que la siguiente `matrix` reutiliza) y devuelve `sheet` con `preserved`.
 - Skills: patrón de macroproceso conectado, vinculación desde Chrome/Edge (el panel integrado de Claude bloquea `/pair`), fórmulas de geometría de `matrix` y etiquetas de datos al costado.
 
-Las capacidades nuevas requieren la web 0.11.4 y un chat que haya cargado el servidor 0.11.0; compruébalas en `read.capabilities` (`matrixActivitySize`, `matrixLinkLabels`, `clearPreservesSheet`, `operationErrorDetail`, `editSummary`).
+Las capacidades nuevas requieren la web 0.11.5 y un chat que haya cargado el servidor 0.11.0; compruébalas en `read.capabilities` (`matrixActivitySize`, `matrixLinkLabels`, `clearPreservesSheet`, `operationErrorDetail`, `editSummary`).
 
 Modelado y revisión conservan la [regla común de responsables y etiquetas](shared/workflow.md#responsables-y-etiquetas-del-flujo). La web 0.11.0 y el servidor 0.10.0 incorporan composición proporcionada, rutas adaptativas y gestión acotada de archivos Microsoft.
 
@@ -31,7 +31,7 @@ Las métricas `timings` describen fases del editor y transporte. `firstVisibleMs
 
 `matrix` crea participante, carriles BPMN nativos, etapas, figuras y conexiones. Recibe `lanes` y `stages` (nombres), `activities` (clave, nombre, tipo opcional, `lane` y `stage` desde uno, `width`/`height` opcionales para actividades), `activitySize` opcional y `links` (`from` y `to` con esas claves, `as` y `label` opcionales). Las fórmulas de posición están en [modelado](shared/modeling.md#geometría-de-matrix). Los desplazamientos opcionales `xOffset/yOffset` colocan varias figuras en una celda; deben caber y no superponerse. Puede reutilizar un participante expandido vacío mediante `poolId`. Devuelve alias `pool`, `lane1…`, `stage1…` y claves de actividades; esos nombres de contenedores están reservados. Conserva el contenido previo de la hoja y las demás hojas.
 
-`clear` requiere `scope:"active"` y limpia solo la hoja activa, con Deshacer; desde la web 0.11.4 conserva nombre e IDs de la hoja y lo informa en `sheet`. Ambas operaciones pasan por la misma prevalidación temporal, comprobación de revisión, caché de solicitudes y recuperación de bloques. Para agrupar limpieza y reconstrucción usa `edit_batch`, un UUID estable y operaciones `clear` + `matrix`; se deshacen juntas. Los bloques admiten también `lane_split/lane_add`. `fit:true` encaja al finalizar y `edit(operation:{type:"fit"})` encaja sin cambiar el archivo. Los resultados del bloque incluyen duración y espera del editor; estos tiempos no representan toda la latencia del modelo o de voz.
+`clear` requiere `scope:"active"` y limpia solo la hoja activa, con Deshacer; desde la web 0.11.5 conserva nombre e IDs de la hoja y lo informa en `sheet`. Ambas operaciones pasan por la misma prevalidación temporal, comprobación de revisión, caché de solicitudes y recuperación de bloques. Para agrupar limpieza y reconstrucción usa `edit_batch`, un UUID estable y operaciones `clear` + `matrix`; se deshacen juntas. Los bloques admiten también `lane_split/lane_add`. `fit:true` encaja al finalizar y `edit(operation:{type:"fit"})` encaja sin cambiar el archivo. Los resultados del bloque incluyen duración y espera del editor; estos tiempos no representan toda la latencia del modelo o de voz.
 
 `requireValid:true` impide aplicar un plan con errores de auditoría y devuelve la geometría temporal en `previewElements` para corregirlo. `create` y `resize` admiten `autoResize:false` para mantener contenedores previamente dimensionados; las figuras deben caber dentro de ellos. Se conserva el ajuste automático nativo cuando se omite.
 

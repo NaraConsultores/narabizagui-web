@@ -42,7 +42,7 @@ const distributed = ['index.html', 'modelador.js', 'modelador.css', 'archivos.js
 const manifest = {};
 
 distributed.push('favicon.ico','assets/favicon-nb.png');
-distributed.push('editor-visual.js','tab-ownership.js');
+distributed.push('editor-visual.js','tab-ownership.js','editor-touch.js');
 distributed.push('workspace.css','workspace-ui.js','instant-edit.js','editor-structure.js','editor-readiness.js');
 distributed.push('editor-operations.js','editor-blocks.js','vendor/model-audit.js','bpmn-merge.js', 'editor-properties.js', 'microsoft-ui.js', 'microsoft-auth.html', 'assets/microsoft-symbol.svg', 'vendor/microsoft-client.js', 'vendor/microsoft-auth.js', 'vendor/MICROSOFT_LICENSES.txt');
 for (const file of distributed) manifest[file] = createHash('sha256').update(await readFile(path.join(root, file))).digest('hex');

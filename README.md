@@ -16,11 +16,15 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
-## Versión 0.11.4
+## Versión 0.11.5
 
 - Plugin y servidor MCP 0.11.0: `matrix` acepta tamaño de actividades (`activitySize`, `width`/`height`) y conexiones con `as`/`label`; los bloques rechazados indican la operación, el elemento y el alias que fallaron; `edit` admite `response:"summary"`; nueva herramienta `narabizagui_export_bpmn` que guarda el XML en un archivo temporal con hash.
 - `clear` conserva el nombre de la hoja y sus IDs de colaboración y proceso, para que las actividades de llamada que la usan sigan enlazadas.
 - Skills con patrón de macroproceso conectado, fórmulas de geometría de matriz y vinculación desde Chrome/Edge.
+
+## Versión 0.11.4
+
+- En pantallas táctiles, un dedo desplaza el diagrama y el pellizco con dos dedos lo amplía o reduce alrededor de los dedos, en lugar de ampliar toda la página. Los controles del lienzo mantienen su tamaño y los toques cortos siguen seleccionando.
 
 ## Versión 0.11.3
 
