@@ -16,6 +16,12 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
+## Versión 0.11.4
+
+- Plugin y servidor MCP 0.11.0: `matrix` acepta tamaño de actividades (`activitySize`, `width`/`height`) y conexiones con `as`/`label`; los bloques rechazados indican la operación, el elemento y el alias que fallaron; `edit` admite `response:"summary"`; nueva herramienta `narabizagui_export_bpmn` que guarda el XML en un archivo temporal con hash.
+- `clear` conserva el nombre de la hoja y sus IDs de colaboración y proceso, para que las actividades de llamada que la usan sigan enlazadas.
+- Skills con patrón de macroproceso conectado, fórmulas de geometría de matriz y vinculación desde Chrome/Edge.
+
 ## Versión 0.11.3
 
 - Si el navegador no permite la ventana de inicio de sesión de Microsoft, el editor continúa automáticamente en la misma pestaña, sin preguntas ni avisos. Conserva el diagrama abierto, incluidos los cambios sin guardar, y al volver reabre el diálogo de Microsoft donde estaba.
@@ -142,8 +148,8 @@ El selector HTML usado como alternativa abre una copia en memoria y no puede det
 El plugin **NaraBizagui by NaraLab**, distribuido mediante **Nara IA Market**, incluye cuatro skills especializadas y el MCP en una sola instalación. Requiere Node.js 22 o superior y un host con ejecución local. No requiere instalar las bibliotecas del servidor por separado.
 
 1. Instala NaraBizagui desde el market y actívalo en un chat local.
-2. Pide conectar el diagrama. Codex entrega un código temporal.
-3. En la pestaña elegida pulsa **Conectar con Codex**, pega el código y pulsa **Vincular esta pestaña**. Autoriza el acceso local si el navegador lo solicita.
+2. Pide conectar el diagrama. El asistente (Codex, Claude u otro host compatible) entrega un código temporal.
+3. En la pestaña elegida, abierta en Chrome o Edge de escritorio, pulsa **Conectar con Codex** (válido para cualquier asistente), pega el código y pulsa **Vincular esta pestaña**. Autoriza el acceso local si el navegador lo solicita.
 4. Codex puede leer, editar propiedades BPMN, aplicar bloques con revisión y deshacer conjunto, auditar sin modificar, guardar en el archivo autorizado y exportar PNG para el chat o un informe.
 
 La versión 0.7.0 organiza el trabajo en coordinación (`narabizagui`), modelado (`narabizagui-modelar`), auditoría (`narabizagui-validar`) y entrega (`narabizagui-entregar`). El recorrido habitual combina una consulta de preparación, un bloque con presentación y una confirmación visual. Sus nueve herramientas esperan el documento estable, devuelven errores accionables y respuestas compactas, y prevalidan hasta 200 operaciones con revisión, idempotencia y Deshacer. Las métricas distinguen fases del editor/transporte; no representan toda la espera del usuario. Consulta [el contrato y los límites del plugin](plugins/narabizagui/README.md#semántica-auditoría-y-bloques).

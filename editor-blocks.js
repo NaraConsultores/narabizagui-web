@@ -76,7 +76,7 @@
         if (rolledBack) { stack._stack = history.actions; stack._stackIdx = history.index; }
         else recovery = { requestId, beforeRevision: before.revision, beforeSha256: before.sha256, xml: before.xml };
         record.status = rolledBack ? 'rolled_back' : 'recovery_required';
-        record.result = { applied: false, requestId, rolledBack, recoveryRequired: !rolledBack, code: rolledBack ? 'BATCH_ROLLED_BACK' : 'BATCH_RECOVERY_REQUIRED', message: failure.message, state: after ? { ...after, xml: undefined } : undefined, ...(recovery ? { recoverySnapshot: recovery } : {}) };
+        record.result = { applied: false, requestId, rolledBack, recoveryRequired: !rolledBack, code: rolledBack ? 'BATCH_ROLLED_BACK' : 'BATCH_RECOVERY_REQUIRED', message: failure.message, causeCode: failure.code || 'EDITOR_ERROR', ...(failure.failedOperation ? { failedOperation: failure.failedOperation } : {}), state: after ? { ...after, xml: undefined } : undefined, ...(recovery ? { recoverySnapshot: recovery } : {}) };
         return format(record.result,response);
       }
     }

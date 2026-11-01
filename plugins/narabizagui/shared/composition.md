@@ -12,6 +12,20 @@ El patrón observado conserva nueve actividades de 260×100: participante de 190
 
 La lectura puede ser izquierda→derecha en una fila y derecha→izquierda en la siguiente. La flecha conserva su origen, destino y significado: mover el destino a la izquierda no invierte la secuencia. Alinea las columnas previstas sin desplazar elementos ajenos al alcance.
 
+## Macroproceso con subprocesos enlazados
+
+Cuando una hoja principal agrupa etapas que tienen su propia hoja, representa **un solo ciclo de vida conectado**, no un conjunto de microflujos sueltos con varios inicios y fines:
+
+- un evento de inicio y uno de fin del ciclo; otros fines solo si son resultados reales distintos (por ejemplo, cancelación);
+- una `bpmn:CallActivity` por etapa, enlazada a su hoja con `sheet_link` (`CallActivity.calledElement`); el detalle vive en la hoja enlazada, no se repite en la principal;
+- decisiones para las variantes de entrada y una compuerta de unión antes de la etapa común, en lugar de un flujo por variante;
+- retornos cuando el ciclo se repite: una decisión como «¿Queda saldo pendiente?» con la rama «Sí» de vuelta a la etapa que se repite y «No» hacia el cierre;
+- las diferencias de frecuencia, periodicidad u orden («mensual», «solo en algunos casos», «puede adelantarse») se documentan en `documentation` o en las propiedades del elemento, no se dibujan como flujos independientes.
+
+Ejemplo genérico: Inicio «Solicitud recibida» → decisión «¿Tipo de solicitud?» (Nueva / Renovación) → «Registrar solicitud nueva» o «Actualizar datos» → unión → CallActivity «Evaluar» → CallActivity «Ejecutar» → CallActivity «Liquidar» → decisión «¿Queda saldo pendiente?» (Sí → vuelve a «Liquidar»; No → CallActivity «Cerrar») → Fin «Ciclo cerrado».
+
+Orden de trabajo recomendado: crea primero las hojas de las etapas (o identifica las existentes con su `processId`), monta la hoja principal en un bloque (`matrix` si hay responsables por etapa, con ramas `as`/`label` y actividades de 220×100 o el tamaño acordado) y después enlaza cada CallActivity con `sheet_link` mediante `edit` con `response:"summary"`. Comprueba en la lista de hojas que cada `calledElement` coincide con el `processId` de su hoja, también después de un `clear` (véase [modelado](modeling.md#geometría-de-matrix)). Valida que haya un único inicio y que cada etapa sea alcanzable desde él.
+
 ## Planear conexiones como conjunto
 
 Reserva corredores y espacio para documentos/etiquetas junto con las filas. Elige salida y entrada según el orden espacial nuevo, las ramas y los obstáculos. Una actividad a la derecha seguida de otra a la izquierda suele admitir salida `left` y entrada `right`; un cambio de fila puede usar `bottom`/`top` o un corredor lateral. No heredes ciegamente `right`/`left` de la versión anterior. No uses diagonales ni tantees una conexión tras otra por coordenadas.
@@ -22,7 +36,7 @@ Si un movimiento compatible produce un retroceso, diagonal, rodeo o cambio de an
 
 ## Documentos y salidas de sistema
 
-Coloca cada documento cerca de sus actividades, con etiqueta y asociaciones legibles. Reutiliza el documento real, incluidas hojas/rangos del mismo libro; hasta cinco asociaciones son admisibles si se distinguen sin cruces ni contactos indebidos. Ese máximo no obliga a dibujar cinco ni justifica duplicar un archivo. Conserva IDs y asociaciones existentes; no inventes archivos, rótulos explicativos ni notas de revisión para resolver la geometría.
+Coloca cada documento cerca de sus actividades, con etiqueta y asociaciones legibles. La etiqueta de un objeto o almacén de datos queda por defecto debajo de la figura y choca con una asociación vertical que sale hacia abajo; sitúala al costado (o encima) con `label.bounds` en el mismo bloque, por ejemplo `{"type":"label","elementId":"@registro","text":"Registro de solicitudes","bounds":{"x":<derecha de la figura + 8>,"y":<centro − 14>,"width":120,"height":28}}`, y comprueba después los límites reales devueltos por `read`. Reutiliza el documento real, incluidas hojas/rangos del mismo libro; hasta cinco asociaciones son admisibles si se distinguen sin cruces ni contactos indebidos. Ese máximo no obliga a dibujar cinco ni justifica duplicar un archivo. Conserva IDs y asociaciones existentes; no inventes archivos, rótulos explicativos ni notas de revisión para resolver la geometría.
 
 Una consulta o selección puede devolver datos temporales sin persistirlos. Antes de mostrar un archivo, registro guardado o almacén como salida, comprueba qué actividad escribe efectivamente y dónde. Un resultado de consulta puede representarse como datos de trabajo si ayuda a entender el proceso, sin atribuirle persistencia. `documentFormat`/`documentUse` eligen presentación y uso; no demuestran una escritura. Conserva la duda fuera del lienzo cuando las fuentes no la resuelvan.
 
@@ -35,6 +49,9 @@ Plan proporcional en el proyecto o en el turno: actividades por fila/carril, dim
 | Cambiar composición existente | `move`/`move_elements`, `resize` y `route` en esquema y `capabilities.batchOperations` | Bloque con geometría explícita preservando IDs. No regenerar un proceso existente con `clear`/`matrix`. |
 | Elegir lados | `route_orthogonal`, `orthogonalRouting` y `persistentAnchors` | Si falta, `route` con puntos ortogonales planificados, solo si está admitido y cubre la intención; si no, documentar dependencia y detener esa parte. |
 | Recortar margen | `compact_container` y `compactContainer` | Recorta derecha/inferior; conserva altura con carriles. No distribuye tareas ni crea filas. Dimensionar mediante operaciones admitidas o dejar pendiente la compactación. |
+| Actividades legibles en una matriz | `capabilities.matrixActivitySize` (editor 0.11.4+) | `activitySize` o `width`/`height` por figura; si falta, `resize` en el mismo bloque con las [fórmulas de la matriz](modeling.md#geometría-de-matrix). |
+| Ramas Sí/No dentro de la matriz | `capabilities.matrixLinkLabels` | `links[].as` y `links[].label`; si falta, `label` sobre el ID devuelto o `connect` separado con `as`. |
+| Copia editable fuera del chat | `narabizagui_export_bpmn` en el esquema cargado | Si falta, `read(includeXml:true)` solo cuando la copia esté autorizada, sabiendo que el XML completo entra al chat. |
 | Crear filas automáticamente | No hay una operación `compact_rows` ni un optimizador global declarado en esta fuente | Planear geometría con operaciones disponibles; no inventar un tipo ni sustituirlo por UI/JavaScript. |
 | Conservar archivo Microsoft | `microsoft-files-v1` y herramientas/capacidades verificadas en el chat; destino y acciones expresamente autorizados | Resolver una carpeta o archivo exacto, comprobar la cuenta, revisión y documento; crear/abrir/asociar con el contrato [Microsoft](microsoft-files.md), y verificar el guardado. Si el runtime no expone ese contrato, la selección inicial corresponde al usuario en el visor. `open_bpmn` solo importa XML y no asocia un destino. |
 

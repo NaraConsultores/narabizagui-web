@@ -1,6 +1,6 @@
 {
   "name": "narabizagui",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Cuatro skills y MCP local para modelar, validar y entregar BPMN/ER con propiedades semánticas, bloques seguros y PNG.",
   "author": {
     "name": "Nara Consultores"

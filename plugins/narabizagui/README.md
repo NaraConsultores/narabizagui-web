@@ -1,6 +1,17 @@
 # NaraBizagui by NaraLab — plugin local
 
-La versión 0.10.0 incluye cuatro skills, scripts compartidos, dieciséis herramientas MCP y el contrato `visual-quality-v1`. El recorrido habitual es una consulta de preparación, un bloque de edición/presentación y una confirmación visual cuando corresponde. Conserva procesos completos, revisión obligatoria, prevalidación, idempotencia y Deshacer/Rehacer.
+La versión 0.11.0 incluye cuatro skills, scripts compartidos, diecisiete herramientas MCP y el contrato `visual-quality-v1`. El recorrido habitual es una consulta de preparación, un bloque de edición/presentación y una confirmación visual cuando corresponde. Conserva procesos completos, revisión obligatoria, prevalidación, idempotencia y Deshacer/Rehacer.
+
+## Novedades 0.11.0 (servidor 0.11.0, web 0.11.4)
+
+- `matrix.activities` admite `width`/`height` y la matriz `activitySize`; sin ellos se conserva 100×80. Las conexiones de `links` admiten `as` y `label` para nombrar ramas Sí/No.
+- Un bloque rechazado devuelve `failedOperation` (índice, tipo, `elementId`, alias y `cell` en la matriz), también para `ROUTE_BLOCKED` y alias repetidos o reservados.
+- `edit` acepta `response:"summary"` para `sheet_link`, `sheet_rename`, `sheet_open` y demás operaciones individuales: devuelve revisión y hojas sin el snapshot completo.
+- `narabizagui_export_bpmn` escribe el XML completo en un `.bpmn` temporal con `sha256`, sin enviarlo al chat.
+- `clear` conserva el nombre de la hoja y los IDs de colaboración y proceso (mantiene un participante vacío que la siguiente `matrix` reutiliza) y devuelve `sheet` con `preserved`.
+- Skills: patrón de macroproceso conectado, vinculación desde Chrome/Edge (el panel integrado de Claude bloquea `/pair`), fórmulas de geometría de `matrix` y etiquetas de datos al costado.
+
+Las capacidades nuevas requieren la web 0.11.4 y un chat que haya cargado el servidor 0.11.0; compruébalas en `read.capabilities` (`matrixActivitySize`, `matrixLinkLabels`, `clearPreservesSheet`, `operationErrorDetail`, `editSummary`).
 
 Modelado y revisión conservan la [regla común de responsables y etiquetas](shared/workflow.md#responsables-y-etiquetas-del-flujo). La web 0.11.0 y el servidor 0.10.0 incorporan composición proporcionada, rutas adaptativas y gestión acotada de archivos Microsoft.
 
@@ -18,9 +29,9 @@ Las métricas `timings` describen fases del editor y transporte. `firstVisibleMs
 
 `narabizagui_sessions` informa la versión del servidor y su contrato realmente activos. `read(detail:"summary")` devuelve revisión, capacidades, autoguardado y disponibilidad sin enviar la geometría completa; no sirve para una auditoría integral. `read` puede consultar el modelo durante un guardado y reutiliza la serialización de una revisión sin cambios. Las mutaciones esperan hasta cinco segundos a un guardado/sincronización en curso y comprueban de nuevo la revisión; nunca sobrescriben una edición posterior ni fuerzan un formulario pendiente.
 
-`matrix` crea participante, carriles BPMN nativos, etapas, figuras y conexiones. Recibe `lanes` y `stages` (nombres), `activities` (clave, nombre, tipo opcional, `lane` y `stage` desde uno) y `links` (`from` y `to` con esas claves). Los desplazamientos opcionales `xOffset/yOffset` colocan varias figuras en una celda; deben caber y no superponerse. Puede reutilizar un participante expandido vacío mediante `poolId`. Devuelve alias `pool`, `lane1…`, `stage1…` y claves de actividades; esos nombres de contenedores están reservados. Conserva el contenido previo de la hoja y las demás hojas.
+`matrix` crea participante, carriles BPMN nativos, etapas, figuras y conexiones. Recibe `lanes` y `stages` (nombres), `activities` (clave, nombre, tipo opcional, `lane` y `stage` desde uno, `width`/`height` opcionales para actividades), `activitySize` opcional y `links` (`from` y `to` con esas claves, `as` y `label` opcionales). Las fórmulas de posición están en [modelado](shared/modeling.md#geometría-de-matrix). Los desplazamientos opcionales `xOffset/yOffset` colocan varias figuras en una celda; deben caber y no superponerse. Puede reutilizar un participante expandido vacío mediante `poolId`. Devuelve alias `pool`, `lane1…`, `stage1…` y claves de actividades; esos nombres de contenedores están reservados. Conserva el contenido previo de la hoja y las demás hojas.
 
-`clear` requiere `scope:"active"` y limpia solo la hoja activa, con Deshacer. Ambas operaciones pasan por la misma prevalidación temporal, comprobación de revisión, caché de solicitudes y recuperación de bloques. Para agrupar limpieza y reconstrucción usa `edit_batch`, un UUID estable y operaciones `clear` + `matrix`; se deshacen juntas. Los bloques admiten también `lane_split/lane_add`. `fit:true` encaja al finalizar y `edit(operation:{type:"fit"})` encaja sin cambiar el archivo. Los resultados del bloque incluyen duración y espera del editor; estos tiempos no representan toda la latencia del modelo o de voz.
+`clear` requiere `scope:"active"` y limpia solo la hoja activa, con Deshacer; desde la web 0.11.4 conserva nombre e IDs de la hoja y lo informa en `sheet`. Ambas operaciones pasan por la misma prevalidación temporal, comprobación de revisión, caché de solicitudes y recuperación de bloques. Para agrupar limpieza y reconstrucción usa `edit_batch`, un UUID estable y operaciones `clear` + `matrix`; se deshacen juntas. Los bloques admiten también `lane_split/lane_add`. `fit:true` encaja al finalizar y `edit(operation:{type:"fit"})` encaja sin cambiar el archivo. Los resultados del bloque incluyen duración y espera del editor; estos tiempos no representan toda la latencia del modelo o de voz.
 
 `requireValid:true` impide aplicar un plan con errores de auditoría y devuelve la geometría temporal en `previewElements` para corregirlo. `create` y `resize` admiten `autoResize:false` para mantener contenedores previamente dimensionados; las figuras deben caber dentro de ellos. Se conserva el ajuste automático nativo cuando se omite.
 
@@ -43,7 +54,7 @@ Las skills comparten el contrato y los analizadores de `shared/`; no duplican re
 
 En Plugins selecciona **Nara IA Market → NaraBizagui by NaraLab → Instalar**. Las cuatro skills y el MCP se instalan juntos. También puede instalarse con el CLI que soporte `codex plugin add narabizagui@nara-ia-market`.
 
-En un chat con el plugin activo pide conectar NaraBizagui. En la pestaña del BPMN pulsa **Conectar con Codex**, pega el código temporal y pulsa **Vincular esta pestaña**. Autoriza el acceso local si el navegador lo solicita. El código vence en cinco minutos y solo se usa una vez. La misma pestaña recupera el vínculo al recargar mientras el MCP siga activo. Cerrar el host o reiniciar el MCP requiere volver a vincular. No se inicia un servicio permanente del sistema.
+En un chat con el plugin activo pide conectar NaraBizagui. En la pestaña del BPMN pulsa **Conectar con Codex** (sirve para cualquier asistente que ejecute este MCP, también Claude), pega el código temporal y pulsa **Vincular esta pestaña**. Autoriza el acceso local si el navegador lo solicita. Vincula desde Chrome o Edge de escritorio: el panel de navegador integrado de la app de escritorio de Claude bloquea la petición local de vinculación (`net::ERR_BLOCKED_BY_CLIENT`). El código vence en cinco minutos y solo se usa una vez. La misma pestaña recupera el vínculo al recargar mientras el MCP siga activo. Cerrar el host o reiniciar el MCP requiere volver a vincular. No se inicia un servicio permanente del sistema.
 
 ## Herramientas
 
@@ -57,6 +68,7 @@ En un chat con el plugin activo pide conectar NaraBizagui. En la pestaña del BP
 | `narabizagui_edit_batch` | Hasta 200 operaciones BPMN compatibles, prevalidación en copia, aliases y un deshacer conjunto. |
 | `narabizagui_save` | Guardado en el archivo autorizado, historial y comprobación. |
 | `narabizagui_export_png` | Hoja activa completa para el chat y archivo PNG temporal para Word/PDF. |
+| `narabizagui_export_bpmn` | XML completo (todas las hojas) en un archivo .bpmn temporal con hash y revisión, sin enviarlo al chat. No guarda el archivo del usuario. |
 | `narabizagui_disconnect` | Revocar una pestaña sin perder su trabajo. |
 | `narabizagui_microsoft_status` | Cuenta/tenant, documento, destino y recibos por requestId. |
 | `narabizagui_microsoft_resolve` | Resolver enlace o IDs Microsoft sin cambiar identidad ni permisos. |

@@ -21,6 +21,8 @@ Entrega hallazgos verificables, alcance cubierto y pendientes; separa validació
 
 Para evaluar distribución usa los criterios de [composición](../../shared/composition.md): compara ancho/alto/área y legibilidad, filas/columnas y anclajes según el orden espacial, conservando dirección lógica, responsables y asociaciones. No impongas dos columnas a todo proceso. Revisa documentos reutilizados y distingue resultados temporales de consulta/selección de datos realmente persistidos. El [ejemplo genérico y su evaluación](../../shared/examples/compact-rows/README.md) separan invariantes comprobables de la confirmación visual pendiente.
 
+En una hoja principal que agrupa subprocesos, comprueba el [patrón de macroproceso](../../shared/composition.md#macroproceso-con-subprocesos-enlazados): un único ciclo conectado desde un inicio, cada CallActivity enlazada a una hoja existente (`calledElement` igual al `processId` de esa hoja en `read.sheets`), variantes unidas antes de la etapa común y retornos donde el ciclo se repite. Informa como hallazgo los microflujos sueltos con varios inicios o fines y los enlaces rotos tras un `clear`.
+
 Consulta [edición visual y calidad](../../shared/visual-editing.md) para interpretar texto, rutas y documentos. Esta skill sigue siendo de solo lectura; remite las correcciones autorizadas a modelado.
 
 Para gestionar una ubicación OneDrive/SharePoint expresamente solicitada, lee [el contrato de archivos Microsoft](../../shared/microsoft-files.md) y comprueba microsoft-files-v1. Una revisión sin cambios sigue siendo de solo lectura: no abre, crea, guarda ni activa autoguardado por inferencia.

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "narabizagui",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Cuatro skills y MCP local para modelar, validar y entregar BPMN/ER con propiedades semánticas, bloques seguros y PNG.",
   "author": {
     "name": "Nara Consultores"

@@ -67,7 +67,7 @@
     if(!serialized||serialized.revision!==base){const {xml}=await modeler.saveXML({format:true});const sha256=await browserFiles.digest(xml);if(base===revision)serialized={revision:base,xml,sha256};else throw error('REVISION_CONFLICT','El diagrama cambió durante la lectura. Lee nuevamente.');}
     const {xml,sha256}=serialized;
     if (base !== revision) throw error('REVISION_CONFLICT', 'El diagrama cambió durante la lectura. Lee nuevamente.');
-    const present=state=>{Object.assign(state,runtime(),{documentReady:true});Object.assign(state.capabilities,{protocolVersion:window.NaraModelAudit?.PROTOCOL_VERSION||5,toolContract:window.NaraModelAudit?.TOOL_CONTRACT||'visual-quality-v1',microsoftFiles:window.NaraMicrosoftFiles?.capabilities||null,matrix:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),clearActive:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),fit:true,documentGuard:true,tabIsolation:true,compactRead:true,compactBatch:true,batchPresentation:true,visualFormatting:state.diagramType==='bpmn',activityResize:state.diagramType==='bpmn',fitText:state.diagramType==='bpmn',orthogonalRouting:state.diagramType==='bpmn',persistentAnchors:state.diagramType==='bpmn',adaptiveRouting:state.diagramType==='bpmn',laneBorderRouting:state.diagramType==='bpmn'&&Boolean(window.NaraModelAudit?.laneRouteConflicts),laneBorderClearance:state.diagramType==='bpmn'?window.NaraModelAudit?.LANE_BORDER_CLEARANCE??null:null,localRouteRecalculation:state.diagramType==='bpmn',visualQuality:true,waitForReadyMs:5000,waitForAutoSaveMs:5000});if(detail==='summary')return window.NaraEditorReadiness.compact(state);return state;};
+    const present=state=>{Object.assign(state,runtime(),{documentReady:true});Object.assign(state.capabilities,{protocolVersion:window.NaraModelAudit?.PROTOCOL_VERSION||5,toolContract:window.NaraModelAudit?.TOOL_CONTRACT||'visual-quality-v1',microsoftFiles:window.NaraMicrosoftFiles?.capabilities||null,matrix:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),clearActive:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),matrixActivitySize:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),matrixLinkLabels:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),clearPreservesSheet:state.diagramType==='bpmn'&&Boolean(window.NaraMcpStructure),operationErrorDetail:true,editSummary:true,fit:true,documentGuard:true,tabIsolation:true,compactRead:true,compactBatch:true,batchPresentation:true,visualFormatting:state.diagramType==='bpmn',activityResize:state.diagramType==='bpmn',fitText:state.diagramType==='bpmn',orthogonalRouting:state.diagramType==='bpmn',persistentAnchors:state.diagramType==='bpmn',adaptiveRouting:state.diagramType==='bpmn',laneBorderRouting:state.diagramType==='bpmn'&&Boolean(window.NaraModelAudit?.laneRouteConflicts),laneBorderClearance:state.diagramType==='bpmn'?window.NaraModelAudit?.LANE_BORDER_CLEARANCE??null:null,localRouteRecalculation:state.diagramType==='bpmn',visualQuality:true,waitForReadyMs:5000,waitForAutoSaveMs:5000});if(detail==='summary')return window.NaraEditorReadiness.compact(state);return state;};
     const canvas = modeler.get('canvas'), er=window.NaraER,activeSheetId = er?.active() || canvas.getRootElement().id;
     if(er?.active()){
       const dataModel=er.read(),elements=[...dataModel.tables.map(t=>({...t,type:'nara:Entity',height:window.NaraERModel.height(t)})),...dataModel.relationships.map(r=>({...r,type:'nara:Relationship'}))];
@@ -78,30 +78,33 @@
     const selectedElements = elementIds ? elements.filter(e => elementIds.includes(e.id)) : elements;
     return present({ editorVersion:window.NaraAppVersion||'unknown', editorBuild:window.NaraAppBuild||'unknown', capabilities:{protocolVersion:5,visualFormatting:true,documentFormatting:true,activityResize:true,fitText:true,orthogonalRouting:true,sharedConnectionRouting:true,persistentAnchors:true,compactContainer:true,visualQuality:true,semanticProperties:Boolean(window.NaraMcpOperations),structuredValidation:Boolean(window.NaraModelAudit),batch: Boolean(blocks),batchLimit:200,batchOperations:window.NaraMcpOperations?.supported||[]}, recentBatches:blocks?.recent()||[], batchRecovery:blocks?.recovery(includeXml), revision, sha256, fileName: browserFiles.name, diagramType:'bpmn', activeSheetId, sheets: modeler.get('naraSheets').list(), dirty, unappliedProperties: formPending(), canSaveToFile: Boolean(browserFiles.handle), selectedIds: modeler.get('selection').get().map(e => e.id), warnings: (window.importWarnings || []).map(w => w.message || String(w)), canUndo: modeler.get('commandStack').canUndo(), canRedo: modeler.get('commandStack').canRedo(), totalElements: elements.length, elementsFiltered:Boolean(elementIds), elementsTruncated: selectedElements.length > 2000, elements:detail==='summary'?[]:selectedElements.slice(0, 2000).map(e=>{const result=describe(e);if(!includePropertyFields)delete result.propertyFields;return result;}),expandedCanvas:window.NaraExpandedCanvas?.()||false, ...(includeXml ? { xml } : {}) });
   }
-  async function edit({ expectedRevision, expectedDocumentId, operation: op }) {
+  async function edit({ expectedRevision, expectedDocumentId, operation: op, response='full' }) {
     await waitReady(expectedRevision,expectedDocumentId);
-    if(['matrix','clear','lane_add','lane_split'].includes(op.type))return blocks.batch({expectedRevision,requestId:op.requestId||crypto.randomUUID(),operations:[op],fit:true});
+    if(!['full','summary'].includes(response))throw error('INVALID_OPERATION','response admite full o summary.');
+    // summary keeps revision, active sheet and sheet list without elements or XML.
+    const after=()=>read(response==='summary'?{detail:'summary'}:{});
+    if(['matrix','clear','lane_add','lane_split'].includes(op.type))return blocks.batch({expectedRevision,requestId:op.requestId||crypto.randomUUID(),operations:[op],fit:true,response});
     if (blocks && window.NaraMcpOperations.supported.includes(op.type) && !window.NaraER?.active()) {
       const affected = blocks.apply(op); keepDocumentDraft = null;
       if (affected?.parent) modeler.get('selection').select(affected);
       status('Cambio de Codex aplicado · Guarda el archivo para conservarlo.');
-      return { applied:true, affectedId:affected?.id, ...(await read()) };
+      return { applied:true, affectedId:affected?.id, ...(await after()) };
     }
     if (op.type === 'open_bpmn') {
       const occupied = modeler.get('elementRegistry').getAll().some(e => e.businessObject && !e.labelTarget && e.parent && (e.type !== 'bpmn:StartEvent' || e.businessObject.name));
       if (dirty || browserFiles.handle || occupied || window.NaraER?.list().length) throw error('DOCUMENT_NOT_EMPTY', 'Abrir mediante MCP requiere una pestaña nueva vacía, sin cambios ni archivo vinculado. Conserva el documento actual.');
       await acceptBrowserSource({ name: op.fileName, xml: op.xml, handle: null });
-      return { applied: true, ...(await read()) };
+      return { applied: true, ...(await after()) };
     }
-    if(op.type==='view'){window.NaraSetFocus(op.expanded);return{applied:true,...(await read())};}
+    if(op.type==='view'){window.NaraSetFocus(op.expanded);return{applied:true,...(await after())};}
     if(op.type==='fit'){fit();return{applied:true,viewOnly:true,...(await read({detail:'summary'}))};}
-    if(op.type==='style'){const affectedId=window.NaraStylePanel.apply(op.elementId,op.style);return{applied:true,affectedId,...(await read())};}
-    if(op.type.startsWith('erd_')){const affectedId=window.NaraER.edit(op);return{applied:true,affectedId,...(await read())};}
+    if(op.type==='style'){const affectedId=window.NaraStylePanel.apply(op.elementId,op.style);return{applied:true,affectedId,...(await after())};}
+    if(op.type.startsWith('erd_')){const affectedId=window.NaraER.edit(op);return{applied:true,affectedId,...(await after())};}
     if(window.NaraER?.active()&&['label','move','resize','delete'].includes(op.type)){
       let erOp;
       if(op.type==='delete')erOp={type:'erd_delete',elementId:op.elementId};
       else{const entity=window.NaraERModel.table(window.NaraER.read(),op.elementId);erOp={type:'erd_table_update',tableId:entity.id,...(op.type==='label'?{name:op.text}:op.type==='move'?{x:entity.x+op.dx,y:entity.y+op.dy}:{x:op.x,y:op.y,width:op.width})};}
-      const affectedId=window.NaraER.edit(erOp);return{applied:true,affectedId,...(await read())};
+      const affectedId=window.NaraER.edit(erOp);return{applied:true,affectedId,...(await after())};
     }
     if(window.NaraER?.active()&&['create','connect','stage','stage_split','lane_add','lane_split','documentation','sheet_link','subprocess_open','route','move_elements'].includes(op.type))throw error('WRONG_DIAGRAM_TYPE','Esta operación requiere una hoja BPMN. Para tablas y relaciones usa las operaciones erd_.');
     const modeling = modeler.get('modeling'), factory = modeler.get('elementFactory'), canvas = modeler.get('canvas'), rules = modeler.get('rules');
@@ -198,7 +201,7 @@
     keepDocumentDraft = null;
     if (affected?.parent && op.type !== 'delete') modeler.get('selection').select(affected);
     status(['sheet_open','subprocess_open'].includes(op.type) ? 'Hoja abierta por Codex.' : 'Cambio de Codex aplicado.');
-    return { applied: true, affectedId: affected?.id, ...(await read()) };
+    return { applied: true, affectedId: affected?.id, ...(await after()) };
   }
   async function save({ expectedRevision, expectedDocumentId }) {
     await waitReady(expectedRevision,expectedDocumentId);

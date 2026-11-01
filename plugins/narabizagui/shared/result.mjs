@@ -12,7 +12,7 @@ export function normalizeResult(value,{toolName='',sessionId,requestId,isError=f
   const ok=['read','applied','preview'].includes(outcome);
   const context={...(data.sessionId||sessionId?{sessionId:data.sessionId||sessionId}:{}),...(data.requestId||requestId?{requestId:data.requestId||requestId}:{})};
   const revision=!['error','unknown','preview','rejected'].includes(outcome)?data.revision||data.state?.revision:undefined;
-  const error=['error','unknown'].includes(outcome)?{code:code||'ERROR',message:data.message||data.error?.message||'La herramienta no confirmó el resultado.',...Object.fromEntries(['busyReason','retryable','retryAfterMs','recovery'].filter(k=>data[k]!==undefined).map(k=>[k,data[k]]))}:undefined;
+  const error=['error','unknown'].includes(outcome)?{code:code||'ERROR',message:data.message||data.error?.message||'La herramienta no confirmó el resultado.',...Object.fromEntries(['busyReason','retryable','retryAfterMs','recovery','failedOperation'].filter(k=>data[k]!==undefined).map(k=>[k,data[k]]))}:undefined;
   return{...data,...context,ok,outcome,...(revision?{revision}:{}),...(error?{error}:{}),responseSchema:'visual-quality-v1',...(toolName?{toolName}:{})};
 }
 export function parseToolResult(reply,context={}){
