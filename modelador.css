@@ -41,7 +41,7 @@ button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:
 #paletteHost .project-document-tool::before,#paletteHost .project-stage-tool::before{content:none}
 .palette-line-icon{display:flex;align-items:center;justify-content:center;height:30px;width:32px;color:#345b78}
 #canvas .djs-context-pad{display:none!important}
-.nara-direction-tools{position:absolute;pointer-events:none;z-index:15}
+#canvas{touch-action:none}.nara-direction-tools{position:absolute;pointer-events:none;z-index:15}
 .nara-direction-tools button{pointer-events:auto;flex-shrink:0;touch-action:none}
 .nara-direction-arrow{position:absolute;width:30px;height:30px;padding:0;font:29px/28px Arial,sans-serif;color:#9cd9ed;opacity:.8;border-radius:5px}
 .nara-direction-arrow:hover,.nara-direction-arrow:focus-visible{color:#139dd3;opacity:1;background:#e5f5fc}
