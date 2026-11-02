@@ -94,18 +94,30 @@
     function run(operations) {
       const aliases = {}, affectedIds = [];
       const resolve = id => typeof id === 'string' && id.startsWith('@') ? aliases[id.slice(1)] || fail('Alias inexistente: ' + id) : id;
-      for (const operation of operations) {
-        if (!supported.includes(operation.type)) fail('Operación no agrupable: ' + operation.type);
-        if (operation.as && (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(operation.as) || aliases[operation.as] || !['create','connect'].includes(operation.type))) fail('Alias inválido o repetido.');
-        const op = { ...operation };
-        for (const key of ['elementId','parentId','sourceId','targetId','withConnectionId']) if (op[key]) op[key] = resolve(op[key]);
-        if (op.elementIds) op.elementIds = op.elementIds.map(resolve);
-        if (op.values) op.values = Object.fromEntries(Object.entries(op.values).map(([key, v]) => [key.startsWith('condition:@') ? 'condition:' + resolve(key.slice(10)) : key, ['defaultFlow','referenceId'].includes(key) ? resolve(v) : v]));
-        const e = apply(op);
-        if(e?.aliases){for(const [key,id]of Object.entries(e.aliases)){if(aliases[key])fail('Alias estructural repetido: '+key);aliases[key]=id;}affectedIds.push(...e.affectedIds);}
-        else {affectedIds.push(e?.id);if(op.as)aliases[op.as]=e.id;}
-      }
-      return { aliases, affectedIds };
+      let sheet;
+      operations.forEach((operation, index) => {
+        // Name the failing operation, element and alias instead of rejecting the block without detail.
+        const target = operation.elementId || operation.elementIds?.[0] || operation.sourceId;
+        try {
+          if (!supported.includes(operation.type)) fail('Operación no agrupable: ' + operation.type);
+          if (operation.as && operation.type === 'matrix') fail('matrix no admite as: devuelve pool, laneN, stageN, las claves de sus figuras y el as de cada conexión.');
+          if (operation.as && (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(operation.as) || !['create','connect'].includes(operation.type))) fail('Alias inválido o no admitido en ' + operation.type + ': ' + operation.as + '. Solo create y connect admiten as.');
+          if (operation.as && aliases[operation.as]) fail('Alias repetido: ' + operation.as + '. pool, laneN, stageN y las claves de matrix ya están reservados.');
+          const op = { ...operation };
+          for (const key of ['elementId','parentId','sourceId','targetId','withConnectionId']) if (op[key]) op[key] = resolve(op[key]);
+          if (op.elementIds) op.elementIds = op.elementIds.map(resolve);
+          if (op.values) op.values = Object.fromEntries(Object.entries(op.values).map(([key, v]) => [key.startsWith('condition:@') ? 'condition:' + resolve(key.slice(10)) : key, ['defaultFlow','referenceId'].includes(key) ? resolve(v) : v]));
+          const e = apply(op);
+          if(e?.aliases){for(const [key,id]of Object.entries(e.aliases)){if(aliases[key])fail('Alias estructural repetido: '+key+'. Usa otra clave o elimina el as anterior.');aliases[key]=id;}affectedIds.push(...e.affectedIds);if(e.sheet)sheet=e.sheet;}
+          else {affectedIds.push(e?.id);if(op.as)aliases[op.as]=e.id;}
+        } catch (cause) {
+          const elementId = typeof target === 'string' && target.startsWith('@') ? aliases[target.slice(1)] : target;
+          const failedOperation = { index, type: operation.type, ...(elementId ? { elementId } : {}), ...(cause.alias || operation.as || target?.startsWith?.('@') ? { alias: cause.alias || operation.as || target.slice(1) } : {}), ...(cause.cell ? { cell: cause.cell } : {}) };
+          if (!cause.failedOperation) { cause.failedOperation = failedOperation; cause.message = 'Operación ' + (index + 1) + ' (' + operation.type + (elementId ? ' · ' + elementId : '') + (failedOperation.alias ? ' · ' + failedOperation.alias : '') + '): ' + cause.message; }
+          throw cause;
+        }
+      });
+      return { aliases, affectedIds, ...(sheet ? { sheet } : {}) };
     }
     return { apply, run, propertyPlan, supported, types };
   }

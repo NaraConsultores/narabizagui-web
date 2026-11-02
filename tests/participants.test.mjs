@@ -69,7 +69,10 @@ test('MCP creates several expanded pools that each accept activities and retain 
     assert.equal(pool.di.isExpanded, true);
     assert.equal(pool.height, 250);
     pools.push(pool);
-    await editor.edit({ expectedRevision: created.revision, operation: { type: 'create', bpmnType: 'bpmn:UserTask', parentId: pool.id, name: 'Generic task', x: 400, y: 200 + index * 350 } });
+    // response=summary keeps revision and sheets without returning the full snapshot.
+    const summary = await editor.edit({ expectedRevision: created.revision, response: 'summary', operation: { type: 'create', bpmnType: 'bpmn:UserTask', parentId: pool.id, name: 'Generic task', x: 400, y: 200 + index * 350 } });
+    assert.ok(Array.isArray(created.elements)); assert.equal(summary.elementsOmitted, true); assert.equal('elements' in summary, false); assert.equal('xml' in summary, false);
+    assert.ok(summary.affectedId); assert.notEqual(summary.revision, created.revision); assert.equal(summary.sheets[0].name, 'Generic test');
   }
   assert.equal(new Set(pools.map(pool => pool.businessObject.processRef.id)).size, 5);
   for (const bpmnType of ['bpmn:IntermediateThrowEvent', 'bpmn:IntermediateCatchEvent']) {

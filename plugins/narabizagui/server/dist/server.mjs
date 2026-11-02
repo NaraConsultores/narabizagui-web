@@ -3262,8 +3262,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path2) {
-      let input = path2;
+    function removeDotSegments(path3) {
+      let input = path3;
       const output = [];
       let nextSlash = -1;
       let len = 0;
@@ -3672,8 +3672,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path2 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path2 && path2 !== "/" ? path2 : void 0;
+        const path3 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path3 && path3 !== "/" ? path3 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -7558,8 +7558,8 @@ function getErrorMap() {
 
 // node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path2, errorMaps, issueData } = params;
-  const fullPath = [...path2, ...issueData.path || []];
+  const { data, path: path3, errorMaps, issueData } = params;
+  const fullPath = [...path3, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -7674,11 +7674,11 @@ var errorUtil;
 
 // node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path2, key) {
+  constructor(parent, value, path3, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path2;
+    this._path = path3;
     this._key = key;
   }
   get path() {
@@ -11598,10 +11598,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema2) {
   return mergeDefs(schema2._zod.def);
 }
-function getElementAtPath(obj, path2) {
-  if (!path2)
+function getElementAtPath(obj, path3) {
+  if (!path3)
     return obj;
-  return path2.reduce((acc, key) => acc?.[key], obj);
+  return path3.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -12010,11 +12010,11 @@ function explicitlyAborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path2, issues) {
+function prefixIssues(path3, issues) {
   return issues.map((iss) => {
     var _a3;
     (_a3 = iss).path ?? (_a3.path = []);
-    iss.path.unshift(path2);
+    iss.path.unshift(path3);
     return iss;
   });
 }
@@ -12161,16 +12161,16 @@ function flattenError(error51, mapper = (issue2) => issue2.message) {
 }
 function formatError(error51, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error52, path2 = []) => {
+  const processError = (error52, path3 = []) => {
     for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path2, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path3, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else {
-        const fullpath = [...path2, ...issue2.path];
+        const fullpath = [...path3, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -12197,17 +12197,17 @@ function formatError(error51, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error51, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error52, path2 = []) => {
+  const processError = (error52, path3 = []) => {
     var _a3, _b;
     for (const issue2 of error52.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path2, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path3, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path2, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else {
-        const fullpath = [...path2, ...issue2.path];
+        const fullpath = [...path3, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -12239,8 +12239,8 @@ function treeifyError(error51, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path2 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path2) {
+  const path3 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path3) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -23352,11 +23352,11 @@ function normalizeObjectSchema(schema2) {
   }
   return void 0;
 }
-function getDotPath(path2) {
-  if (path2.length === 0) {
+function getDotPath(path3) {
+  if (path3.length === 0) {
     return "object root";
   }
-  return path2.reduce((acc, seg, index) => {
+  return path3.reduce((acc, seg, index) => {
     if (index === 0) {
       return String(seg);
     }
@@ -25381,13 +25381,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path2 = ref.slice(1).split("/").filter(Boolean);
-  if (path2.length === 0) {
+  const path3 = ref.slice(1).split("/").filter(Boolean);
+  if (path3.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path2[0] === defsKey) {
-    const key = path2[1];
+  if (path3[0] === defsKey) {
+    const key = path3[1];
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -31367,7 +31367,7 @@ var EVENT_KINDS = {
 };
 
 // plugins/narabizagui/server/bridge.mjs
-var VERSION = "0.10.0";
+var VERSION = "0.11.0";
 var token = () => randomBytes(32).toString("base64url");
 var same = (a, b) => {
   if (typeof a !== "string" || typeof b !== "string") return false;
@@ -31484,7 +31484,7 @@ async function startBridge({ allowedOrigins = ["https://demo.naraconsultores.com
         if (!pending || input.commandId !== pending.command.id || !pending.delivered) return reply(res, 409, { error: "Comando vencido o ya confirmado." });
         clearTimeout(pending.timer);
         session2.pending = null;
-        if (input.error) pending.reject(Object.assign(fail(String(input.error.code || "EDITOR_ERROR"), String(input.error.message || "El visor rechaz\xF3 la operaci\xF3n.")), Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery", "phase", "requestId", "created", "verified", "attached", "remote", "currentSaved", "currentSavedRemote"].filter((key) => input.error[key] !== void 0).map((key) => [key, input.error[key]]))));
+        if (input.error) pending.reject(Object.assign(fail(String(input.error.code || "EDITOR_ERROR"), String(input.error.message || "El visor rechaz\xF3 la operaci\xF3n.")), Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery", "phase", "requestId", "created", "verified", "attached", "remote", "currentSaved", "currentSavedRemote", "failedOperation"].filter((key) => input.error[key] !== void 0).map((key) => [key, input.error[key]]))));
         else {
           if (typeof input.result?.documentId === "string") session2.observedDocumentId = input.result.documentId;
           if (pending.command.action === "editBatch" && input.result && typeof input.result === "object") input.result.timings = { ...input.result.timings, transport: { queueMs: pending.deliveredAt - pending.started, roundTripMs: Date.now() - pending.started } };
@@ -31585,6 +31585,26 @@ async function pngArtifact(result) {
   return { content: [{ type: "image", mimeType: "image/png", data: bytes.toString("base64") }, { type: "text", text: JSON.stringify(metadata) }], structuredContent: metadata };
 }
 
+// plugins/narabizagui/server/bpmn-file.mjs
+import { mkdir as mkdir2, writeFile as writeFile2 } from "node:fs/promises";
+import { tmpdir as tmpdir2 } from "node:os";
+import path2 from "node:path";
+import { createHash as createHash2, randomUUID as randomUUID3 } from "node:crypto";
+var fail2 = (code, message) => Object.assign(new Error(message), { code });
+async function bpmnArtifact(state, { expectedRevision, directory = path2.join(tmpdir2(), "NaraBizagui", "exports") } = {}) {
+  if (state?.documentReady === false) throw fail2("NOT_READY", "El visor todav\xEDa no puede leer el documento. Espera y lee de nuevo.");
+  if (typeof state?.xml !== "string" || !/^\s*</.test(state.xml)) throw fail2("BPMN_EXPORT_ERROR", "El visor no devolvi\xF3 el XML del documento.");
+  if (expectedRevision && state.revision !== expectedRevision) throw fail2("REVISION_CONFLICT", "El diagrama cambi\xF3 desde la revisi\xF3n indicada. Lee de nuevo antes de exportar.");
+  const bytes = Buffer.from(state.xml, "utf8");
+  if (bytes.length > 8 * 1024 * 1024) throw fail2("BPMN_TOO_LARGE", "El BPMN supera 8 MB.");
+  await mkdir2(directory, { recursive: true });
+  const name = path2.basename(String(state.fileName || "diagrama.bpmn")).replace(/\.bpmn$/i, "").replace(/[<>:"/\\|?*\x00-\x1f]/g, "_").slice(0, 80) || "diagrama";
+  const filePath = path2.join(directory, `narabizagui-${name}-${randomUUID3()}.bpmn`);
+  await writeFile2(filePath, bytes, { flag: "wx" });
+  const sha256 = createHash2("sha256").update(bytes).digest("hex");
+  return { exported: true, filePath, mimeType: "application/xml", bytes: bytes.length, sha256, ...state.sha256 ? { matchesEditorSha256: state.sha256 === sha256 } : {}, revision: state.revision, sourceFileName: state.fileName, ...state.documentId ? { documentId: state.documentId } : {}, activeSheetId: state.activeSheetId, sheets: (state.sheets || []).map(({ id: id2, name: name2, kind, processId }) => ({ id: id2, name: name2, kind, ...processId ? { processId } : {} })), temporary: true, saved: false };
+}
+
 // plugins/narabizagui/shared/result.mjs
 function normalizeResult(value, { toolName = "", sessionId, requestId, isError = false } = {}) {
   const data = value && typeof value === "object" && !Array.isArray(value) ? value : {};
@@ -31599,7 +31619,7 @@ function normalizeResult(value, { toolName = "", sessionId, requestId, isError =
   const ok = ["read", "applied", "preview"].includes(outcome);
   const context = { ...data.sessionId || sessionId ? { sessionId: data.sessionId || sessionId } : {}, ...data.requestId || requestId ? { requestId: data.requestId || requestId } : {} };
   const revision = !["error", "unknown", "preview", "rejected"].includes(outcome) ? data.revision || data.state?.revision : void 0;
-  const error51 = ["error", "unknown"].includes(outcome) ? { code: code || "ERROR", message: data.message || data.error?.message || "La herramienta no confirm\xF3 el resultado.", ...Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery"].filter((k) => data[k] !== void 0).map((k) => [k, data[k]])) } : void 0;
+  const error51 = ["error", "unknown"].includes(outcome) ? { code: code || "ERROR", message: data.message || data.error?.message || "La herramienta no confirm\xF3 el resultado.", ...Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery", "failedOperation"].filter((k) => data[k] !== void 0).map((k) => [k, data[k]])) } : void 0;
   return { ...data, ...context, ok, outcome, ...revision ? { revision } : {}, ...error51 ? { error: error51 } : {}, responseSchema: "visual-quality-v1", ...toolName ? { toolName } : {} };
 }
 
@@ -31658,7 +31678,7 @@ async function startServer(bridgeOptions = {}) {
     external_exports.object({ type: external_exports.literal("view"), expanded: external_exports.boolean() }),
     external_exports.object({ type: external_exports.literal("fit") }),
     external_exports.object({ type: external_exports.literal("clear"), scope: external_exports.literal("active"), requestId: external_exports.string().uuid().optional() }),
-    external_exports.object({ type: external_exports.literal("matrix"), requestId: external_exports.string().uuid().optional(), name: erName.optional(), poolId: elementId.optional(), x: finite.optional(), y: finite.optional(), width: external_exports.number().min(280).max(1e4).optional(), rowHeight: external_exports.number().min(140).max(600).optional(), lanes: external_exports.array(erName).min(1).max(10), stages: external_exports.array(erName).min(1).max(10), activities: external_exports.array(external_exports.object({ key: external_exports.string().regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/), name: external_exports.string().max(120).optional(), bpmnType: external_exports.enum(["bpmn:Task", "bpmn:UserTask", "bpmn:ManualTask", "bpmn:ServiceTask", "bpmn:SubProcess", "bpmn:CallActivity", "bpmn:StartEvent", "bpmn:EndEvent", "bpmn:ExclusiveGateway", "bpmn:ParallelGateway"]).optional(), lane: external_exports.number().int().min(1).max(10), stage: external_exports.number().int().min(1).max(10), xOffset: finite.optional(), yOffset: finite.optional() })).max(100).default([]), links: external_exports.array(external_exports.object({ from: elementId, to: elementId })).max(200).default([]) }),
+    external_exports.object({ type: external_exports.literal("matrix"), requestId: external_exports.string().uuid().optional(), name: erName.optional(), poolId: elementId.optional(), x: finite.optional(), y: finite.optional(), width: external_exports.number().min(280).max(1e4).optional(), rowHeight: external_exports.number().min(140).max(600).optional(), lanes: external_exports.array(erName).min(1).max(10), stages: external_exports.array(erName).min(1).max(10), activities: external_exports.array(external_exports.object({ key: external_exports.string().regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/), name: external_exports.string().max(120).optional(), bpmnType: external_exports.enum(["bpmn:Task", "bpmn:UserTask", "bpmn:ManualTask", "bpmn:ServiceTask", "bpmn:SubProcess", "bpmn:CallActivity", "bpmn:StartEvent", "bpmn:EndEvent", "bpmn:ExclusiveGateway", "bpmn:ParallelGateway"]).optional(), lane: external_exports.number().int().min(1).max(10), stage: external_exports.number().int().min(1).max(10), xOffset: finite.optional(), yOffset: finite.optional(), width: external_exports.number().min(20).max(1e3).optional(), height: external_exports.number().min(20).max(1e3).optional() })).max(100).default([]), activitySize: external_exports.object({ width: external_exports.number().min(20).max(1e3).optional(), height: external_exports.number().min(20).max(1e3).optional() }).optional(), links: external_exports.array(external_exports.object({ from: elementId, to: elementId, as: external_exports.string().regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/).optional(), label: external_exports.string().max(120).optional() })).max(200).default([]) }),
     external_exports.object({ type: external_exports.literal("documentation"), elementId, text }),
     external_exports.object({ type: external_exports.literal("create"), bpmnType: external_exports.enum(BPMN_CREATE_TYPES), x: finite, y: finite, parentId: elementId.optional(), name: text.optional(), expanded: external_exports.boolean().optional(), autoResize: external_exports.boolean().optional(), linkName: external_exports.string().min(1).max(100).optional(), eventDefinition: external_exports.enum([...new Set(Object.values(EVENT_KINDS).flat())]).optional() }),
     external_exports.object({ type: external_exports.literal("properties"), elementId, values: external_exports.record(external_exports.string(), external_exports.union([external_exports.string().max(2e4), external_exports.boolean()])).refine((v) => Object.keys(v).length > 0 && Object.keys(v).length <= 100) }),
@@ -31699,7 +31719,7 @@ async function startServer(bridgeOptions = {}) {
         const result = normalizeResult(await callback(args), { toolName: name, sessionId: args.sessionId, requestId: args.requestId });
         return { content: [{ type: "text", text: JSON.stringify(result) }], structuredContent: result };
       } catch (error51) {
-        const result = normalizeResult({ code: error51.code || "ERROR", message: error51.message, ...Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery", "phase", "requestId", "created", "verified", "attached", "remote", "currentSaved", "currentSavedRemote"].filter((key) => error51[key] !== void 0).map((key) => [key, error51[key]])) }, { toolName: name, sessionId: args.sessionId, requestId: args.requestId, isError: true });
+        const result = normalizeResult({ code: error51.code || "ERROR", message: error51.message, ...Object.fromEntries(["busyReason", "retryable", "retryAfterMs", "recovery", "phase", "requestId", "created", "verified", "attached", "remote", "currentSaved", "currentSavedRemote", "failedOperation"].filter((key) => error51[key] !== void 0).map((key) => [key, error51[key]])) }, { toolName: name, sessionId: args.sessionId, requestId: args.requestId, isError: true });
         return { isError: true, content: [{ type: "text", text: JSON.stringify(result) }], structuredContent: result };
       }
     });
@@ -31717,8 +31737,8 @@ async function startServer(bridgeOptions = {}) {
   });
   register("narabizagui_validate", "Valida la hoja activa sin editar. Devuelve incidencias con c\xF3digos e IDs, enlaces por \xE1mbito, condiciones y geometr\xEDa real. review permite representaci\xF3n explicativa; formal exige condiciones. Incluye quality separado de errores BPMN: texto renderizado, marcadores, carriles y recorridos. elementIds limita esa revisi\xF3n visual al conjunto y conexiones afectadas. No aprueba el negocio ni ejecuta expresiones.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional(), profile: external_exports.enum(["review", "formal"]).default("review"), geometry: external_exports.boolean().default(true), maxIssues: external_exports.number().int().min(1).max(1e3).default(200), elementIds: external_exports.array(elementId).min(1).max(250).optional() }, true, (args) => bridge.request(args.sessionId, "validate", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId, profile: args.profile, geometry: args.geometry, maxIssues: args.maxIssues, elementIds: args.elementIds }));
   const batchOperation = external_exports.discriminatedUnion("type", edit.options.filter((schema2) => BATCH_OPERATIONS.includes(schema2.shape.type.value)).map((schema2) => schema2.extend({ as: external_exports.string().regex(/^[A-Za-z][A-Za-z0-9_-]{0,63}$/).optional() })));
-  register("narabizagui_edit_batch", "Prevalida y aplica de 1 a 200 operaciones BPMN con alias, revisi\xF3n obligatoria, un Deshacer e idempotencia. Admite procesos completos, matrix, clear de hoja activa, carriles, style, delete, fit_text y route_orthogonal con lados persistentes. presentation.expandedCanvas y fit preparan la vista dentro de la misma petici\xF3n. response=summary devuelve revisi\xF3n, alias y validaci\xF3n sin las figuras; full incluye geometr\xEDa. El resultado distingue tiempo de editor, transporte y primer cuadro confirmado; no mide la espera total del usuario. dryRun no aplica ni cambia la vista; requireValid rechaza errores sin tocar el modelo. Respeta autoguardado. No incluye hojas ni ER.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional(), requestId: external_exports.string().uuid(), operations: external_exports.array(batchOperation).min(1).max(BATCH_LIMIT), dryRun: external_exports.boolean().default(false), fit: external_exports.boolean().default(true), presentation: external_exports.object({ expandedCanvas: external_exports.boolean().optional() }).default({}), response: external_exports.enum(["summary", "full"]).default("summary"), requireValid: external_exports.boolean().default(false) }, false, (args) => bridge.request(args.sessionId, "editBatch", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId, requestId: args.requestId, operations: args.operations, dryRun: args.dryRun, fit: args.fit, presentation: args.presentation, response: args.response, requireValid: args.requireValid }));
-  register("narabizagui_edit", "Aplica una operaci\xF3n nativa bpmn-js, con revisi\xF3n base obligatoria y deshacer. properties edita los campos de semanticProperties seg\xFAn propertyFields de read y reutiliza la validaci\xF3n manual. create.eventDefinition configura el tipo de evento. Usa read para conocer IDs. x/y son el centro al crear; move usa desplazamiento. stage a\xF1ade una etapa al final o a izquierda/derecha de sourceId. lane_add/lane_split gestionan carriles nativos. stage_split divide columnas. style aplica formato persistente y erd_field_move reordena campos. view ampl\xEDa/restaura el lienzo sin cambiar el archivo. Las operaciones erd_ crean hojas de datos, tablas, campos y relaciones por campo; sus x/y son esquina superior izquierda. sheet_create crea otra hoja, sheet_open navega, sheet_rename renombra, subprocess_open abre el detalle y sheet_link vincula con otro proceso mediante CallActivity; no reemplaza subprocesos con contenido.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional(), operation: edit }, false, (args) => bridge.request(args.sessionId, "edit", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId, operation: args.operation }));
+  register("narabizagui_edit_batch", "Prevalida y aplica de 1 a 200 operaciones BPMN con alias, revisi\xF3n obligatoria, un Deshacer e idempotencia. Admite procesos completos, matrix (tama\xF1o de actividades y conexiones con as/label), clear de hoja activa (conserva nombre e IDs de la hoja), carriles, style, delete, fit_text y route_orthogonal con lados persistentes. presentation.expandedCanvas y fit preparan la vista dentro de la misma petici\xF3n. response=summary devuelve revisi\xF3n, alias y validaci\xF3n sin las figuras; full incluye geometr\xEDa. El resultado distingue tiempo de editor, transporte y primer cuadro confirmado; no mide la espera total del usuario. dryRun no aplica ni cambia la vista; requireValid rechaza errores sin tocar el modelo. Respeta autoguardado. Un fallo indica failedOperation con \xEDndice, tipo, elementId y alias. No incluye hojas ni ER: para sheet_link usa edit con response=summary.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional(), requestId: external_exports.string().uuid(), operations: external_exports.array(batchOperation).min(1).max(BATCH_LIMIT), dryRun: external_exports.boolean().default(false), fit: external_exports.boolean().default(true), presentation: external_exports.object({ expandedCanvas: external_exports.boolean().optional() }).default({}), response: external_exports.enum(["summary", "full"]).default("summary"), requireValid: external_exports.boolean().default(false) }, false, (args) => bridge.request(args.sessionId, "editBatch", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId, requestId: args.requestId, operations: args.operations, dryRun: args.dryRun, fit: args.fit, presentation: args.presentation, response: args.response, requireValid: args.requireValid }));
+  register("narabizagui_edit", "Aplica una operaci\xF3n nativa bpmn-js, con revisi\xF3n base obligatoria y deshacer. properties edita los campos de semanticProperties seg\xFAn propertyFields de read y reutiliza la validaci\xF3n manual. create.eventDefinition configura el tipo de evento. Usa read para conocer IDs. x/y son el centro al crear; move usa desplazamiento. stage a\xF1ade una etapa al final o a izquierda/derecha de sourceId. lane_add/lane_split gestionan carriles nativos. stage_split divide columnas. style aplica formato persistente y erd_field_move reordena campos. view ampl\xEDa/restaura el lienzo sin cambiar el archivo. Las operaciones erd_ crean hojas de datos, tablas, campos y relaciones por campo; sus x/y son esquina superior izquierda. sheet_create crea otra hoja, sheet_open navega, sheet_rename renombra, subprocess_open abre el detalle y sheet_link vincula con otro proceso mediante CallActivity; no reemplaza subprocesos con contenido. response=summary devuelve revisi\xF3n, hoja activa y lista de hojas sin figuras ni XML; \xFAsalo en sheet_link, sheet_rename, sheet_open y sheet_create.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional(), operation: edit, response: external_exports.enum(["full", "summary"]).default("full") }, false, (args) => bridge.request(args.sessionId, "edit", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId, operation: args.operation, response: args.response }));
   register("narabizagui_save", "Guarda en el archivo ya elegido y autorizado en el visor, conservando historial y comprobando conflictos. Si falta acceso, el usuario debe usar Guardar como en el navegador. No elige destinos ni descarga copias silenciosamente.", { sessionId: id2, expectedRevision: revision, expectedDocumentId: external_exports.string().min(1).max(200).optional() }, false, (args) => bridge.request(args.sessionId, "save", { expectedRevision: args.expectedRevision, expectedDocumentId: args.expectedDocumentId }));
   for (const tool of MICROSOFT_FILE_TOOLS) register(tool.name, tool.description, tool.schema, tool.readOnly, (args) => bridge.request(args.sessionId, tool.action, args));
   server.registerTool("narabizagui_export_png", {
@@ -31735,6 +31755,7 @@ async function startServer(bridgeOptions = {}) {
       return { isError: true, structuredContent: result, content: [{ type: "text", text: JSON.stringify(result) }] };
     }
   });
+  register("narabizagui_export_bpmn", "Guarda el XML BPMN completo (todas las hojas) en un archivo temporal local y devuelve ruta, bytes, sha256, revisi\xF3n y hojas, sin enviar el XML al chat. Es una copia de trabajo o respaldo: no guarda el archivo del usuario ni sustituye save o el autoguardado. expectedRevision rechaza exportar si el diagrama cambi\xF3.", { sessionId: id2, expectedRevision: revision.optional() }, true, async (args) => bpmnArtifact(await bridge.request(args.sessionId, "read", { detail: "full", includeXml: true, waitForReadyMs: 5e3, elementIds: ["__narabizagui_export__"] }), { expectedRevision: args.expectedRevision }));
   register("narabizagui_disconnect", "Revoca la conexi\xF3n de una pesta\xF1a sin cerrar su diagrama ni descartar cambios.", { sessionId: id2 }, false, async (args) => {
     bridge.disconnect(args.sessionId);
     return { disconnected: true };
