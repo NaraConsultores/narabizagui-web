@@ -6,7 +6,7 @@ Editor de procesos BPMN en el navegador, con carriles por responsable, columnas 
 
 Web: **https://demo.naraconsultores.com/NaraFlows/**
 
-NaraFlows es el nuevo nombre de NaraBizagui. Los enlaces anteriores siguen abriendo el editor en el mismo dominio, con el mismo almacenamiento del navegador.
+NaraFlows es el nuevo nombre de NaraBizagui. La entrada anterior redirige a NaraFlows y conserva sus parámetros y fragmento. El almacenamiento del navegador sigue en el mismo dominio.
 
 Código y mejoras de la web: [NaraConsultores/naraflows-web](https://github.com/NaraConsultores/naraflows-web).
 
@@ -17,6 +17,10 @@ python -m http.server 8766 --bind 127.0.0.1
 ```
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
+
+## Versión 0.12.2
+
+- Usa el logotipo actualizado y redirige la entrada anterior al editor NaraFlows. La página de retorno de Microsoft conserva su dirección registrada.
 
 ## Versión 0.12.1
 
