@@ -4,8 +4,8 @@ node_modules/
 *.log
 *.pid
 *.bpmn
-!plugins/narabizagui/shared/examples/compact-rows/before.bpmn
-!plugins/narabizagui/shared/examples/compact-rows/after.bpmn
+!plugins/naraflows/shared/examples/compact-rows/before.bpmn
+!plugins/naraflows/shared/examples/compact-rows/after.bpmn
 *.xlsx
 *.docx
 *.vtt

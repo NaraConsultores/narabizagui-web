@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta name="narabizagui-build" content="0f82baf31b617dd4">
-  <meta name="narabizagui-mode" content="browser">
+  <meta name="naraflows-build" content="5d90a4f02cb40954">
+  <meta name="naraflows-mode" content="browser">
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>NaraBizagui by NaraLab</title>
-  <link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48 256x256" href="favicon.ico?v=a447de01e87f26dd">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-nb.png?v=3a52e8adae4d77c7">
+  <title>NaraFlows</title>
+  <link rel="canonical" href="https://demo.naraconsultores.com/NaraFlows/">
+  <link rel="icon" type="image/svg+xml" href="assets/naraflows-icon.svg?v=f09e32c10238e04e">
   <link rel="stylesheet" href="vendor/diagram-js.css?v=08ead062d4284cb1">
   <link rel="stylesheet" href="vendor/bpmn.css?v=b4b8f7070233c196">
   <link rel="stylesheet" href="vendor/bpmn-js.css?v=b09861c8e7030764">
-  <link rel="stylesheet" href="modelador.css?v=b0df8eb6350467ba">
-  <link rel="stylesheet" href="workspace.css?v=74be7c6da43d3079">
+  <link rel="stylesheet" href="modelador.css?v=b4310b0409bca8b6">
+  <link rel="stylesheet" href="workspace.css?v=b2fc2ad13ef2d470">
 </head>
 <body>
   <header class="titlebar">
-    <div class="brand" aria-label="NaraBizagui by NaraLab"><img class="brand-logo unified-brand" src="assets/narabizagui_blanco.png" alt="NaraBizagui by NaraLab"></div>
+    <div class="brand" aria-label="NaraFlows"><img class="brand-logo unified-brand" src="assets/naraflows.png?v=6f4dd7a53450399d" alt="NaraFlows"></div>
     <div class="model-title"><span id="projectName" class="project-context"></span><span id="diagramTitle">Abriendo proyecto…</span></div>
     <span id="dirtyState" class="save-state">Sin cambios pendientes</span>
     <span id="focusSheet" class="focus-sheet" hidden></span>
@@ -97,7 +97,7 @@
   <script src="vendor/bpmn-modeler.production.min.js?v=5956b3e36ce23b3f"></script>
   <dialog id="codexDialog" class="codex-dialog" aria-labelledby="codexHeading">
     <div class="history-heading"><h2 id="codexHeading">Conectar con Codex</h2><button id="codexClose" aria-label="Cerrar conexión">×</button></div>
-    <p>Instala el plugin NaraBizagui desde Nara IA Market y pide a Codex que conecte este diagrama. Pega aquí el código temporal que te entregue.</p>
+    <p>Instala el plugin NaraFlows desde Nara IA Market y pide a Codex que conecte este diagrama. Pega aquí el código temporal que te entregue.</p>
     <form id="codexForm"><label for="codexCode">Código de conexión</label><input id="codexCode" autocomplete="off" spellcheck="false" placeholder="Pega el código de Codex"><button id="codexPair" type="submit">Vincular esta pestaña</button></form>
     <p id="codexMessage" role="status">Solo se conecta la pestaña que vincules. Guardar requiere un archivo elegido y permiso de escritura.</p>
     <button id="codexDisconnect" type="button" hidden>Desconectar esta pestaña</button>
@@ -115,9 +115,9 @@
     </div>
     <p id="msMessage" role="status" class="ms-message">Conecta una cuenta Microsoft.</p>
     <footer class="ms-footer"><button id="msCancel">Cancelar</button><button id="msOpen" class="ms-primary" hidden disabled>Abrir</button><button id="msSave" class="ms-primary" hidden disabled>Guardar</button></footer>
-    <details class="ms-privacy"><summary>Permisos y privacidad</summary><p>El permiso de Microsoft permite leer, modificar y eliminar los archivos a los que tu cuenta tiene acceso. NaraBizagui implementa apertura y guardado de BPMN. Para SharePoint se solicita además lectura de sitios.</p><p>La conexión se recuerda en este navegador mediante la biblioteca de Microsoft. Para conservarla al cerrar todo el navegador, elige «Mantener la sesión iniciada» si Microsoft lo permite. Tu organización puede exigir iniciar sesión de nuevo. Cuenta → Desconectar borra el acceso y las referencias recordadas de esta cuenta en NaraBizagui, sin cerrar Microsoft 365.</p><p>Se recuerdan la carpeta, el último BPMN y hasta 12 archivos recientes por cuenta mediante nombres e identificadores. Al volver a entrar, se relee desde Microsoft el último archivo guardado, si el editor está vacío. Limpiar recientes borra la lista y deja de retomar ese archivo. Los BPMN no se conservan en el Historial local: los cambios sin guardar no se recuperan. Si vinculas Codex, el modelo puede enviarse al chat que autorices.</p></details>
+    <details class="ms-privacy"><summary>Permisos y privacidad</summary><p>El permiso de Microsoft permite leer, modificar y eliminar los archivos a los que tu cuenta tiene acceso. NaraFlows implementa apertura y guardado de BPMN. Para SharePoint se solicita además lectura de sitios.</p><p>La conexión se recuerda en este navegador mediante la biblioteca de Microsoft. Para conservarla al cerrar todo el navegador, elige «Mantener la sesión iniciada» si Microsoft lo permite. Tu organización puede exigir iniciar sesión de nuevo. Cuenta → Desconectar borra el acceso y las referencias recordadas de esta cuenta en NaraFlows, sin cerrar Microsoft 365.</p><p>Se recuerdan la carpeta, el último BPMN y hasta 12 archivos recientes por cuenta mediante nombres e identificadores. Al volver a entrar, se relee desde Microsoft el último archivo guardado, si el editor está vacío. Limpiar recientes borra la lista y deja de retomar ese archivo. Los BPMN no se conservan en el Historial local: los cambios sin guardar no se recuperan. Si vinculas Codex, el modelo puede enviarse al chat que autorices.</p></details>
   </dialog>
-  <script src="vendor/microsoft-client.js?v=42c49599c8ca6492"></script>
+  <script src="vendor/microsoft-client.js?v=1057d2b497e8a7c5"></script>
   <script src="tab-ownership.js?v=95d96466274e1b51"></script>
   <script src="archivos.js?v=93bc8c358e9b4f56"></script>
   <script src="autoguardado.js?v=0bd55020f202bea6"></script>
@@ -130,17 +130,17 @@
   <script src="sheets.js?v=bd6c2b349fc15b99"></script>
   <script src="editor-style.js?v=b5d7097189894073"></script>
   <script src="editor-properties.js?v=80cef0f8efc02a3f"></script>
-  <script src="vendor/model-audit.js?v=b91322b844aa9925"></script>
+  <script src="vendor/model-audit.js?v=53774b8f2daa1738"></script>
   <script src="editor-visual.js?v=9d538f5e7b22ada4"></script>
   <script src="editor-structure.js?v=ebbee0718a84ee68"></script>
   <script src="editor-operations.js?v=bbf2f92a8226e1f0"></script>
   <script src="editor-readiness.js?v=1fc199795fe392da"></script>
   <script src="editor-blocks.js?v=b56f199c11a4959f"></script>
-  <script src="modelador.js?v=c8c9776cfe5d19fb"></script>
+  <script src="modelador.js?v=c8ac1d3eff29ff2a"></script>
   <script src="editor-touch.js?v=b49e0dbaf27ff22b"></script>
-  <script src="mcp-editor.js?v=af41f2bb33e19f54"></script>
-  <script src="mcp-bridge.js?v=df2435dbd1796cfb"></script>
-  <script src="microsoft-ui.js?v=7752c762754bfd4a"></script>
+  <script src="mcp-editor.js?v=d9b0cefdc08cd26d"></script>
+  <script src="mcp-bridge.js?v=ad619a8906c20906"></script>
+  <script src="microsoft-ui.js?v=2f7554cbf94c6fb6"></script>
   <script src="instant-edit.js?v=a5b55f83b2dea674"></script>
-  <script src="workspace-ui.js?v=d4a30e557a7ae494"></script>
+  <script src="workspace-ui.js?v=9ecf26b0319e906e"></script>
 </body></html>

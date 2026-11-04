@@ -47,7 +47,7 @@ body :is(button,summary,input,select,textarea,[tabindex]):focus-visible{outline:
 
 /* Keep the canvas controls reachable while giving the diagram more height. */
 .app-header{min-height:64px;padding:4px 16px;gap:14px}
-.app-header .brand-logo{width:180px!important;height:50px!important;max-height:none;object-fit:cover}
+.app-header .brand-logo{width:180px!important;height:50px!important;max-height:none;object-fit:contain;filter:brightness(0) invert(1)}
 .app-header .model-title{gap:0}.app-header .project-context{font-size:10px;line-height:13px}.app-header #diagramTitle{line-height:18px}.file-title-group>.workspace-action{font-size:10px;line-height:15px}
 .workspace-toolbar{min-height:35px;padding:2px 10px}.workspace-toolbar>.app-menu>summary{padding:3px 8px}.command-actions>button{min-height:28px;padding:4px 8px}
 .show-tools-button{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:4px 9px;margin-right:4px;border:1px solid #bdcfde;background:#edf5fb;color:#215f88;font-size:12px;white-space:nowrap}.show-tools-button::before{content:'›';font-size:17px;line-height:16px}.show-tools-button:hover{background:#deedf8}
@@ -63,7 +63,7 @@ body :is(button,summary,input,select,textarea,[tabindex]):focus-visible{outline:
 .focus-mode .app-header>:not(.brand){visibility:hidden;pointer-events:none}
 .focus-mode .app-header .brand{position:relative;pointer-events:auto;cursor:pointer}
 .focus-mode .app-header .brand-logo{opacity:0}
-.focus-mode .app-header .brand::before{content:'';position:absolute;inset:0;pointer-events:none;background:var(--navy);opacity:.2;-webkit-mask:url('assets/narabizagui_blanco.png') center/cover no-repeat;mask:url('assets/narabizagui_blanco.png') center/cover no-repeat}
+.focus-mode .app-header .brand::before{content:'';position:absolute;inset:0;pointer-events:none;background:var(--navy);opacity:.2;-webkit-mask:url('assets/naraflows_blanco.png') center/contain no-repeat;mask:url('assets/naraflows_blanco.png') center/contain no-repeat}
 .focus-mode .app-header.focus-header-open{background:var(--navy);pointer-events:auto}
 .focus-mode .app-header.focus-header-open>:not(.brand){visibility:visible;pointer-events:auto}
 .focus-mode .app-header.focus-header-open .brand-logo{opacity:1}

@@ -6,7 +6,7 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
 import {build} from 'esbuild';
-import * as audit from '../plugins/narabizagui/shared/audit.mjs';
+import * as audit from '../plugins/naraflows/shared/audit.mjs';
 
 const bundle=await build({stdin:{contents:`
  export {BpmnModdle} from 'bpmn-moddle'; export {Ids} from 'ids';

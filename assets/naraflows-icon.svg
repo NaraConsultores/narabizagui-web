@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="NaraFlows">
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#071632"/>
+  <path d="M23 91V37h9l24 33V37h10v54h-9L33 58v33zm54 0V37h29v10H87v12h17v10H87v22z" fill="white"/>
+</svg>

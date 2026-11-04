@@ -340,5 +340,5 @@
     }
   };
   const microsoftActions=Object.fromEntries(['Status','Resolve','List','Create','Open','Attach','Autosave'].map(suffix=>['microsoft'+suffix,args=>{if(!window.NaraMicrosoftFiles)throw error('EDITOR_NOT_READY','Microsoft aún se está preparando.');return window.NaraMicrosoftFiles[suffix.toLowerCase()](args);} ]));
-  window.NaraBizaguiEditor = Object.freeze({ read, edit, save, exportPng, validate, fileAdapter, ...microsoftActions,editBatch: args => { if(args.expectedDocumentId&&args.expectedDocumentId!==browserFiles.documentId)throw error("DOCUMENT_MISMATCH","El archivo cambió. Lee nuevamente.");return blocks.batch(args); } });
+  window.NaraBizaguiEditor = window.NaraFlowsEditor = Object.freeze({ read, edit, save, exportPng, validate, fileAdapter, ...microsoftActions,editBatch: args => { if(args.expectedDocumentId&&args.expectedDocumentId!==browserFiles.documentId)throw error("DOCUMENT_MISMATCH","El archivo cambió. Lee nuevamente.");return blocks.batch(args); } });
 })();

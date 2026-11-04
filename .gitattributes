@@ -1,5 +1,5 @@
 * text=auto eol=lf
 *.png binary
 *.woff2 binary
-plugins/narabizagui/server/dist/server.mjs linguist-generated=true whitespace=-blank-at-eol
+plugins/naraflows/server/dist/server.mjs linguist-generated=true whitespace=-blank-at-eol
 vendor/sheets-import.js linguist-generated=true

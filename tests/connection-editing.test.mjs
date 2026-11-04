@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {planReconnectPreview,planMovedRoutes,shareConnectionPath,projectRoute} from '../plugins/narabizagui/shared/connection-editing.mjs';
-import {routeMetrics,routeOrthogonal} from '../plugins/narabizagui/shared/routing.mjs';
-import {validateSnapshot} from '../plugins/narabizagui/shared/audit.mjs';
+import {planReconnectPreview,planMovedRoutes,shareConnectionPath,projectRoute} from '../plugins/naraflows/shared/connection-editing.mjs';
+import {routeMetrics,routeOrthogonal} from '../plugins/naraflows/shared/routing.mjs';
+import {validateSnapshot} from '../plugins/naraflows/shared/audit.mjs';
 const a={id:'A',type:'bpmn:Task',x:50,y:200,width:100,height:80,flowScopeId:'P'},c={...a,id:'C',y:20},b={...a,id:'B',x:500};
 const reference={id:'F',type:'bpmn:SequenceFlow',sourceId:'A',targetId:'B',flowScopeId:'P',waypoints:[{x:150,y:240},{x:300,y:240},{x:300,y:160},{x:550,y:160},{x:550,y:200}],routing:{mode:'orthogonal',source:{side:'right',offset:.5},target:{side:'top',offset:.5}}};
 const candidate={...reference,id:'G',sourceId:'C',waypoints:[{x:150,y:60},{x:550,y:60},{x:550,y:200}]};

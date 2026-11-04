@@ -1,12 +1,14 @@
-# NaraBizagui by NaraLab
+# NaraFlows
 
 Editor de procesos BPMN en el navegador, con carriles por responsable, columnas de etapas, documentos y comentarios. Interfaz propia de NaraLab basada en bpmn-js.
 
 ## Abrir
 
-Web: **https://demo.naraconsultores.com/NaraBizagui/**
+Web: **https://demo.naraconsultores.com/NaraFlows/**
 
-Código y mejoras de la web: [NaraConsultores/narabizagui-web](https://github.com/NaraConsultores/narabizagui-web).
+NaraFlows es el nuevo nombre de NaraBizagui. Los enlaces anteriores siguen abriendo el editor en el mismo dominio, con el mismo almacenamiento del navegador.
+
+Código y mejoras de la web: [NaraConsultores/naraflows-web](https://github.com/NaraConsultores/naraflows-web).
 
 También puede ejecutarse el código localmente desde esta carpeta:
 
@@ -16,9 +18,14 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
+## Versión 0.12.0
+
+- NaraFlows en la web, los repositorios y Nara IA Market. Instala `naraflows@nara-ia-market` y usa un chat nuevo para las herramientas `naraflows_*`.
+- Los archivos BPMN/ER conservan su formato. El cambio mantiene el retorno registrado de Microsoft y el protocolo de vinculación de pestañas.
+
 ## Versión 0.11.5
 
-- Plugin y servidor MCP 0.11.0: `matrix` acepta tamaño de actividades (`activitySize`, `width`/`height`) y conexiones con `as`/`label`; los bloques rechazados indican la operación, el elemento y el alias que fallaron; `edit` admite `response:"summary"`; nueva herramienta `narabizagui_export_bpmn` que guarda el XML en un archivo temporal con hash.
+- Plugin y servidor MCP 0.11.0: `matrix` acepta tamaño de actividades (`activitySize`, `width`/`height`) y conexiones con `as`/`label`; los bloques rechazados indican la operación, el elemento y el alias que fallaron; `edit` admite `response:"summary"`; se añadió la exportación MCP de BPMN a un archivo temporal con hash.
 - `clear` conserva el nombre de la hoja y sus IDs de colaboración y proceso, para que las actividades de llamada que la usan sigan enlazadas.
 - Skills con patrón de macroproceso conectado, fórmulas de geometría de matriz y vinculación desde Chrome/Edge.
 
@@ -32,7 +39,7 @@ Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
 ## Versión 0.11.2
 
-- Si el navegador bloquea la ventana de inicio de sesión de Microsoft (navegadores integrados o bloqueadores de ventanas emergentes), el editor ofrece continuar en la misma pestaña y vuelve a NaraBizagui al terminar. Solo lo permite cuando no hay cambios sin guardar ni texto de Propiedades pendiente.
+- Si el navegador bloquea la ventana de inicio de sesión de Microsoft (navegadores integrados o bloqueadores de ventanas emergentes), el editor ofrece continuar en la misma pestaña y vuelve a NaraFlows al terminar. Solo lo permite cuando no hay cambios sin guardar ni texto de Propiedades pendiente.
 
 ## Versión 0.11.1
 
@@ -71,7 +78,7 @@ Al acercar el mouse a una figura aparecen cuatro flechas. Las opciones rápidas 
 
 Las pestañas inferiores representan hojas del mismo BPMN. **＋** crea una hoja del tipo elegido; doble clic en una pestaña cambia su nombre. Un subproceso contraído abre su detalle con doble clic. Para reutilizar otra hoja, selecciona un subproceso vacío y elige **Propiedades → Hoja de proceso reutilizable**; la selección se aplica inmediatamente. El modelo utiliza una actividad de llamada BPMN (`CallActivity.calledElement`); no reemplaza el contenido de un subproceso que ya tiene elementos. La flecha inferior vuelve a la hoja anterior.
 
-Guardar conserva todas las hojas en un solo archivo BPMN 2.0, con sus planos y referencias. SVG y PNG exportan la hoja activa. Otros modeladores pueden presentar estos planos de manera distinta; las pestañas son la navegación de NaraBizagui.
+Guardar conserva todas las hojas en un solo archivo BPMN 2.0, con sus planos y referencias. SVG y PNG exportan la hoja activa. Otros modeladores pueden presentar estos planos de manera distinta; las pestañas son la navegación de NaraFlows.
 
 ### Propiedades BPMN desde la interfaz
 
@@ -114,7 +121,7 @@ Límite: 8 MB por BPMN. Se probaron OAuth, navegación, creación, reapertura y 
 
 La interfaz muestra primero el inicio de sesión. Después abre OneDrive y ofrece navegación de carpetas, selección de BPMN y acciones Abrir/Guardar. Cambiar cuenta y Desconectar están en el menú de la cuenta; los detalles de permisos están en un apartado desplegable. El [símbolo oficial de Microsoft](https://learn.microsoft.com/en-us/entra/identity-platform/howto-add-branding-in-apps) se conserva sin alteraciones; pertenece a Microsoft y se utiliza para identificar su inicio de sesión.
 
-El retorno de producción es `https://demo.naraconsultores.com/NaraBizagui/microsoft-auth.html`. Para desarrollo está registrado `http://localhost:8767/microsoft-auth.html`; se debe servir esta carpeta en ese origen. La página de retorno usa el puente de MSAL y no debe recibir una cabecera COOP que rompa la ventana de autenticación. La verificación de editor de Microsoft está pendiente; las políticas de otras organizaciones pueden impedir el consentimiento o exigir aprobación de su administrador. El diálogo de conexión describe los permisos y el tratamiento de los documentos.
+El retorno de producción registrado en Entra sigue siendo `https://demo.naraconsultores.com/NaraBizagui/microsoft-auth.html`. El editor principal está en `/NaraFlows/`; `/NaraBizagui/` mantiene los enlaces existentes en el mismo origen. Para desarrollo está registrado `http://localhost:8767/microsoft-auth.html`; se debe servir esta carpeta en ese origen. La página de retorno usa el puente de MSAL y no debe recibir una cabecera COOP que rompa la ventana de autenticación. La verificación de editor de Microsoft está pendiente; las políticas de otras organizaciones pueden impedir el consentimiento o exigir aprobación de su administrador. El diálogo de conexión describe los permisos y el tratamiento de los documentos.
 
 La paleta izquierda tiene desplazamiento propio para llegar a todas las herramientas en ventanas pequeñas.
 
@@ -133,7 +140,7 @@ Selecciona **Herramientas → Modelo de datos** para abrir o crear una hoja ER; 
 - **Relación** permite elegir el campo de origen y el de destino. También puedes arrastrar entre los puntos de dos campos. La relación se crea al unir los campos; el panel derecho permite ajustar los extremos, nombre y cardinalidades `1`, `0..1`, `N` y `0..N`.
 - Deshacer/rehacer conserva los IDs de tablas, campos y relaciones. Eliminar un campo o tabla elimina sus relaciones asociadas; la interfaz pide confirmar cuando existen esas dependencias.
 
-Las hojas ER se guardan junto con los procesos en el mismo `.bpmn`, como extensión Nara de `Definitions.extensionElements`. No se representan como tareas BPMN. La extensión mantiene un modelo versionado con entidades, campos, relaciones y geometría. NaraBizagui lo vuelve a abrir; otros editores pueden conservar el XML sin ofrecer su edición visual. Se comprobó la relectura con bpmn-moddle con y sin el descriptor Nara, sin prometer compatibilidad visual con otros productos.
+Las hojas ER se guardan junto con los procesos en el mismo `.bpmn`, como extensión Nara de `Definitions.extensionElements`. No se representan como tareas BPMN. La extensión mantiene un modelo versionado con entidades, campos, relaciones y geometría. NaraFlows lo vuelve a abrir; otros editores pueden conservar el XML sin ofrecer su edición visual. Se comprobó la relectura con bpmn-moddle con y sin el descriptor Nara, sin prometer compatibilidad visual con otros productos.
 
 El MCP lee `diagramType`, `dataModel` y la hoja activa, y permite editarla mediante operaciones `erd_`. SVG y PNG exportan el modelo de datos activo, incluidos campos, PK/FK y cardinalidades. Dibujar el modelo no crea ni modifica una base de datos, ni implica validar su diseño.
 
@@ -149,20 +156,20 @@ El selector HTML usado como alternativa abre una copia en memoria y no puede det
 
 ### Plugin con skill y MCP local
 
-El plugin **NaraBizagui by NaraLab**, distribuido mediante **Nara IA Market**, incluye cuatro skills especializadas y el MCP en una sola instalación. Requiere Node.js 22 o superior y un host con ejecución local. No requiere instalar las bibliotecas del servidor por separado.
+El plugin **NaraFlows**, distribuido mediante **Nara IA Market**, incluye cuatro skills especializadas y el MCP en una sola instalación. Requiere Node.js 22 o superior y un host con ejecución local. No requiere instalar las bibliotecas del servidor por separado.
 
-1. Instala NaraBizagui desde el market y actívalo en un chat local.
+1. Instala NaraFlows desde el market y actívalo en un chat local.
 2. Pide conectar el diagrama. El asistente (Codex, Claude u otro host compatible) entrega un código temporal.
 3. En la pestaña elegida, abierta en Chrome o Edge de escritorio, pulsa **Conectar con Codex** (válido para cualquier asistente), pega el código y pulsa **Vincular esta pestaña**. Autoriza el acceso local si el navegador lo solicita.
 4. Codex puede leer, editar propiedades BPMN, aplicar bloques con revisión y deshacer conjunto, auditar sin modificar, guardar en el archivo autorizado y exportar PNG para el chat o un informe.
 
-La versión 0.7.0 organiza el trabajo en coordinación (`narabizagui`), modelado (`narabizagui-modelar`), auditoría (`narabizagui-validar`) y entrega (`narabizagui-entregar`). El recorrido habitual combina una consulta de preparación, un bloque con presentación y una confirmación visual. Sus nueve herramientas esperan el documento estable, devuelven errores accionables y respuestas compactas, y prevalidan hasta 200 operaciones con revisión, idempotencia y Deshacer. Las métricas distinguen fases del editor/transporte; no representan toda la espera del usuario. Consulta [el contrato y los límites del plugin](plugins/narabizagui/README.md#semántica-auditoría-y-bloques).
+El plugin organiza el trabajo en coordinación (`naraflows`), modelado (`naraflows-modelar`), auditoría (`naraflows-validar`) y entrega (`naraflows-entregar`). El recorrido habitual combina una consulta de preparación, un bloque con presentación y una confirmación visual. Las herramientas esperan el documento estable, devuelven errores accionables y respuestas compactas, y prevalidan hasta 200 operaciones con revisión, idempotencia y Deshacer. Las métricas distinguen fases del editor/transporte; no representan toda la espera del usuario. Consulta [el contrato y los límites del plugin](plugins/naraflows/README.md#semántica-auditoría-y-bloques).
 
 El código de vínculo es de un solo uso y vence en cinco minutos. Solo se conecta la pestaña vinculada a esa instancia del plugin. **Desconectar** revoca el vínculo y conserva el trabajo. El puente no ofrece acceso general al disco ni habilita por sí solo uso móvil, acceso entre equipos o Microsoft Graph. Los datos que se consultan mediante MCP se entregan a la conversación del asistente.
 
 La misma pestaña recuerda su vínculo durante la sesión del navegador y lo recupera al recargar o ante cortes temporales, mientras el MCP local siga activo. Desconectar elimina ese vínculo recordado; reiniciar el servidor requiere uno nuevo. Recuperar la conexión no guarda ni restaura por sí solo un BPMN con cambios pendientes.
 
-La herramienta `narabizagui_export_png` devuelve la hoja activa completa como imagen al chat y como archivo temporal local, listo para incorporarlo a Word/PDF. Fondo blanco y escala ajustable, con límites de tamaño. Exportar no guarda el BPMN. Consulta los requisitos y herramientas en [el plugin](plugins/narabizagui/README.md).
+La herramienta `naraflows_export_png` devuelve la hoja activa completa como imagen al chat y como archivo temporal local, listo para incorporarlo a Word/PDF. Fondo blanco y escala ajustable, con límites de tamaño. Exportar no guarda el BPMN. Consulta los requisitos y herramientas en [el plugin](plugins/naraflows/README.md).
 
 ## Recursos
 
@@ -172,7 +179,7 @@ Al abrir el detalle de un subproceso contraído o una actividad de llamada apare
 
 Al editar flechas, los extremos cercanos se acoplan al borde y la vista previa usa el recorrido final sin diagonales. Mover el extremo común de una flecha con un tramo compartido la independiza para respetar la nueva entrada o salida elegida. Alt evita el acople automático.
 
-`index.html`, `modelador.js`, `editor-tools.js`, `sheets.js`, `erd-model.js`, `erd-editor.js`, `editor-style.js`, `archivos.js`, `mcp-editor.js`, `mcp-bridge.js`, `modelador.css` y `assets/` forman la aplicación. `manifest.json` registra sus hashes al empaquetar. Las dependencias y su licencia se conservan en `vendor/`. El servidor MCP y la skill viven en `plugins/narabizagui/`; la web estática no ejecuta el servidor.
+`index.html`, `modelador.js`, `editor-tools.js`, `sheets.js`, `erd-model.js`, `erd-editor.js`, `editor-style.js`, `archivos.js`, `mcp-editor.js`, `mcp-bridge.js`, `modelador.css` y `assets/` forman la aplicación. `manifest.json` registra sus hashes al empaquetar. Las dependencias y su licencia se conservan en `vendor/`. El servidor MCP y la skill viven en `plugins/naraflows/`; la web estática no ejecuta el servidor.
 
 Para desarrollar el plugin: `npm ci`, `npm run build`, `npm test`. El build incluye sus dependencias y licencias en el paquete y actualiza el manifiesto web.
 

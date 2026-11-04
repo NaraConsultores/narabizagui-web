@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
-import * as audit from '../plugins/narabizagui/shared/audit.mjs';
+import * as audit from '../plugins/naraflows/shared/audit.mjs';
 const source=await readFile(new URL('../editor-visual.js',import.meta.url),'utf8');
 function fixture(){
  const root={id:'P'},bo={$parent:{id:'P'},$instanceOf:type=>type==='bpmn:Task'},a={id:'A',type:'bpmn:ManualTask',x:100,y:200,width:200,height:100,parent:root,businessObject:{...bo,name:'Texto genérico'}},b={id:'B',type:'bpmn:Task',x:600,y:200,width:100,height:80,parent:root,businessObject:{...bo}},flow={id:'F',type:'bpmn:SequenceFlow',source:a,target:b,businessObject:{...bo},parent:root,waypoints:[{x:300,y:250},{x:450,y:250},{x:450,y:160},{x:650,y:160},{x:650,y:200}]};

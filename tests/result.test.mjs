@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {normalizeResult,parseToolResult,confirmedState,recoveryDecision} from '../plugins/narabizagui/shared/result.mjs';
+import {normalizeResult,parseToolResult,confirmedState,recoveryDecision} from '../plugins/naraflows/shared/result.mjs';
 
 test('normal dry-runs are previews, failed prevalidation stays rejected, recovery has one bounded read',()=>{
  assert.equal(normalizeResult({dryRun:true,applied:false}).outcome,'preview');

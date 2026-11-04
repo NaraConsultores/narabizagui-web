@@ -1,4 +1,4 @@
-// Export only the public web assets, preserving the deployed origin and path.
+// Export the editor at its canonical and compatibility paths on the same origin.
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -28,27 +28,36 @@ const files = tracked.filter(file =>
   /^(?:assets|vendor)\//.test(file) ||
   (!file.includes('/') && (/\.(?:html|js|css|ico)$/.test(file) || ['manifest.json', 'THIRD_PARTY_NOTICES.md'].includes(file)))
 );
-const output = path.join(target, 'NaraBizagui');
+const routes = ['NaraFlows', 'NaraBizagui'];
+const output = routes.map(route => path.join(target, route));
 const hashes = {};
+const assets = new Map();
 for (const file of files) {
   if (file.split('/').includes('..')) throw new Error('Unsafe asset path');
   const bytes = git(root, 'show', `HEAD:${file}`);
   const digest = createHash('sha256').update(bytes).digest('hex');
   if (manifest[file] && manifest[file] !== digest) throw new Error(`Stale manifest: ${file}`);
   hashes[file] = digest;
-  const destination = path.join(output, file);
-  await mkdir(path.dirname(destination), { recursive: true });
-  await writeFile(destination, bytes);
+  assets.set(file, bytes);
 }
 for (const file of Object.keys(manifest)) {
   if (!hashes[file]) throw new Error(`Missing distributed asset: ${file}`);
 }
-await writeFile(path.join(output, '.nojekyll'), '');
-await writeFile(path.join(output, 'publication.json'), JSON.stringify({
-  source: 'https://github.com/NaraConsultores/narabizagui-web',
+const publication = JSON.stringify({
+  source: 'https://github.com/NaraConsultores/naraflows-web',
   commit: revision,
-  url: 'https://demo.naraconsultores.com/NaraBizagui/',
+  url: 'https://demo.naraconsultores.com/NaraFlows/',
+  compatibilityUrl: 'https://demo.naraconsultores.com/NaraBizagui/',
   files: hashes,
-}, null, 2) + '\n');
+}, null, 2) + '\n';
+for (const directory of output) {
+  for (const [file, bytes] of assets) {
+    const destination = path.join(directory, file);
+    await mkdir(path.dirname(destination), { recursive: true });
+    await writeFile(destination, bytes);
+  }
+  await writeFile(path.join(directory, '.nojekyll'), '');
+  await writeFile(path.join(directory, 'publication.json'), publication);
+}
 console.log(JSON.stringify({ status: 'EXPORTED', files: files.length, manifestAssets: Object.keys(manifest).length, revision, output }));
-console.log('Review and commit only NaraBizagui/ in the publication repository, then push its main branch.');
+console.log('Review and commit only NaraFlows/ and NaraBizagui/ in the publication repository, then push main.');

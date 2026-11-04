@@ -60,7 +60,7 @@ test('MCP creates several expanded pools that each accept activities and retain 
   context.modeler = { get: service => services[service], saveXML: options => moddle.toXML(definitions, options) };
   vm.runInNewContext(await readFile(new URL('../editor-readiness.js', import.meta.url), 'utf8'), context);
   vm.runInNewContext(await readFile(new URL('../mcp-editor.js', import.meta.url), 'utf8'), context);
-  const editor = context.window.NaraBizaguiEditor, pools = [];
+  const editor = context.window.NaraFlowsEditor, pools = [];
   for (const [index, name] of ['Area A', 'Area B', 'Area C', 'Area D', 'Area E'].entries()) {
     const before = await editor.read();
     const created = await editor.edit({ expectedRevision: before.revision, operation: { type: 'create', bpmnType: 'bpmn:Participant', name, x: 400, y: 200 + index * 350 } });

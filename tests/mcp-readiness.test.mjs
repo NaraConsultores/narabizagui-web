@@ -11,7 +11,7 @@ function fixture(){
  const context={ready:true,loadingDiagram:false,saving:false,filePolling:false,dirty:false,setTimeout,crypto:{randomUUID},stageName:()=>'',roleFor:()=>'',phaseFor:()=>'',keepDocumentDraft:null,status(){},fit(){counts.fit++;},window:{NaraPropertyDraftPending:()=>false},browserFiles:{name:'Generic.bpmn',handle:null,async digest(xml){counts.digested++;return createHash('sha256').update(xml).digest('hex');}}};
  const services={eventBus:{on:(key,fn)=>callbacks.set(key,fn)},commandStack:{registerHandler(){},canUndo:()=>false,canRedo:()=>false},elementRegistry:{get:id=>id==='Task'?task:root,getAll:()=>[root,task]},canvas:{getRootElement:()=>root,findRoot:e=>e.parent||e},naraSheets:{list:()=>[{id:'Process',name:'Generic'}]},selection:{get:()=>[],select(){}},modeling:{updateLabel(e,text){e.businessObject.name=text;counts.edits++;context.dirty=true;callbacks.get('commandStack.changed')();}}};
  context.modeler={get:key=>services[key],async saveXML(){counts.serialized++;return{xml:'<model name="'+task.businessObject.name+'"/>'};}};
- vm.runInNewContext(readinessSource,context);vm.runInNewContext(source,context);return{context,editor:context.window.NaraBizaguiEditor,counts,task,services};
+ vm.runInNewContext(readinessSource,context);vm.runInNewContext(source,context);return{context,editor:context.window.NaraFlowsEditor,counts,task,services};
 }
 test('reads remain available during autosave and unchanged revisions serialize only once',async()=>{
  const f=fixture();f.context.saving=true;

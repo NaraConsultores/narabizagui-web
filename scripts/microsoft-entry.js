@@ -5,10 +5,15 @@ import { MicrosoftWorkspace } from './microsoft-workspace.js';
 import { MicrosoftFileLifecycle } from '../microsoft-lifecycle.js';
 
 // OAuth client identifiers are public application identifiers, not client secrets.
+// Keep the registered production callback while both editor URLs are supported.
+const productionOrigin = 'https://demo.naraconsultores.com';
+const microsoftRedirectUri = location.origin === productionOrigin
+  ? new URL('/NaraBizagui/microsoft-auth.html', productionOrigin).href
+  : new URL('microsoft-auth.html', location.href).href;
 const clientId = 'f6e8c708-7319-4fde-8220-af052e371621';
 window.NaraMicrosoft = { FileLifecycle: MicrosoftFileLifecycle, create() {
     const client = new PublicClientApplication({
-      auth: { clientId, authority: 'https://login.microsoftonline.com/common', redirectUri: new URL('microsoft-auth.html', location.href).href },
+      auth: { clientId, authority: 'https://login.microsoftonline.com/common', redirectUri: microsoftRedirectUri },
       cache: { cacheLocation: 'localStorage' },
       system: { loggerOptions: { piiLoggingEnabled: false, loggerCallback() {} } }
     });

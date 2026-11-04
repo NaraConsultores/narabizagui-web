@@ -1,6 +1,0 @@
-interface:
-  display_name: "NaraBizagui by NaraLab"
-  short_description: "Edita y verifica BPMN en tu sesión vinculada"
-  default_prompt: "Usa $narabizagui:narabizagui para conectar la pestaña elegida, leer su revisión y editar conservando el archivo y su historial."
-policy:
-  allow_implicit_invocation: false

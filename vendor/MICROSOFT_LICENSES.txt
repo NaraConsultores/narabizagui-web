@@ -1,4 +1,4 @@
-NaraBizagui Microsoft authentication — bundled third-party licenses.
+NaraFlows Microsoft authentication — bundled third-party licenses.
 
 
 --- @azure/msal-browser@5.25.1 (MIT) ---

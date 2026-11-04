@@ -1515,6 +1515,6 @@
 
   // scripts/microsoft-auth-entry.js
   broadcastResponseToMainFrame().catch(() => {
-    document.getElementById("authMessage").textContent = "Vuelve a NaraBizagui y abre la conexi\xF3n Microsoft de nuevo.";
+    document.getElementById("authMessage").textContent = "Vuelve a NaraFlows y abre la conexi\xF3n Microsoft de nuevo.";
   });
 })();
