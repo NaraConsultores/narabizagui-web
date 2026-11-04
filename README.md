@@ -18,6 +18,10 @@ python -m http.server 8766 --bind 127.0.0.1
 
 Abrir `http://127.0.0.1:8766/`. No hay servidor de documentos ni base de datos.
 
+## Versión 0.12.1
+
+- Usa el monograma oficial de NaraFlows en el icono del navegador y del plugin.
+
 ## Versión 0.12.0
 
 - NaraFlows en la web, los repositorios y Nara IA Market. Instala `naraflows@nara-ia-market` y usa un chat nuevo para las herramientas `naraflows_*`.

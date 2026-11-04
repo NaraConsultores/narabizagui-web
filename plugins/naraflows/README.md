@@ -1,6 +1,6 @@
 # NaraFlows — plugin local
 
-**NaraFlows 0.12.0** es el nuevo nombre de NaraBizagui. Instala `naraflows@nara-ia-market` en Codex o Claude Code y usa un chat nuevo para las herramientas `naraflows_*`. Las sesiones anteriores conservan su servidor hasta cerrarlas; el editor abre los mismos BPMN/ER.
+**NaraFlows 0.12.1** es el nuevo nombre de NaraBizagui. Instala `naraflows@nara-ia-market` en Codex o Claude Code y usa un chat nuevo para las herramientas `naraflows_*`. Las sesiones anteriores conservan su servidor hasta cerrarlas; el editor abre los mismos BPMN/ER.
 
 La versión 0.11.0 incluye cuatro skills, scripts compartidos, diecisiete herramientas MCP y el contrato `visual-quality-v1`. El recorrido habitual es una consulta de preparación, un bloque de edición/presentación y una confirmación visual cuando corresponde. Conserva procesos completos, revisión obligatoria, prevalidación, idempotencia y Deshacer/Rehacer.
 
