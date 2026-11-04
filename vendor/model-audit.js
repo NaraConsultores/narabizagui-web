@@ -17,7 +17,7 @@ var NaraModelAudit = (() => {
   };
   var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // plugins/narabizagui/shared/audit.mjs
+  // plugins/naraflows/shared/audit.mjs
   var audit_exports = {};
   __export(audit_exports, {
     BATCH_LIMIT: () => BATCH_LIMIT,
@@ -54,7 +54,7 @@ var NaraModelAudit = (() => {
     validateSnapshot: () => validateSnapshot
   });
 
-  // plugins/narabizagui/shared/contract.mjs
+  // plugins/naraflows/shared/contract.mjs
   var PROTOCOL_VERSION = 5;
   var TOOL_CONTRACT = "visual-quality-v1";
   var BATCH_LIMIT = 200;
@@ -67,7 +67,7 @@ var NaraModelAudit = (() => {
     "bpmn:IntermediateThrowEvent": ["Message", "Signal", "Escalation", "Link", "Compensate"]
   };
 
-  // plugins/narabizagui/shared/geometry.mjs
+  // plugins/naraflows/shared/geometry.mjs
   var same = (a, b) => Math.abs(a - b) < 0.01;
   var pointEqual = (a, b) => same(a.x, b.x) && same(a.y, b.y);
   var cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
@@ -104,7 +104,7 @@ var NaraModelAudit = (() => {
   var boxesOverlap = (a, b) => a.x < b.x + b.width - 0.01 && a.x + a.width > b.x + 0.01 && a.y < b.y + b.height - 0.01 && a.y + a.height > b.y + 0.01;
   var segmentAlongBox = (a, b, box) => same(a.x, b.x) && (same(a.x, box.x) || same(a.x, box.x + box.width)) && Math.min(a.y, b.y) < box.y + box.height - 0.01 && Math.max(a.y, b.y) > box.y + 0.01 || same(a.y, b.y) && (same(a.y, box.y) || same(a.y, box.y + box.height)) && Math.min(a.x, b.x) < box.x + box.width - 0.01 && Math.max(a.x, b.x) > box.x + 0.01;
 
-  // plugins/narabizagui/shared/lane-routing.mjs
+  // plugins/naraflows/shared/lane-routing.mjs
   var LANE_BORDER_CLEARANCE = 16;
   var rect = (e) => [e.x, e.y, e.width, e.height].every(Number.isFinite) && e.width > 0 && e.height > 0;
   function laneBoundaries(snapshot) {
@@ -146,7 +146,7 @@ var NaraModelAudit = (() => {
     return conflicts;
   }
 
-  // plugins/narabizagui/shared/routing.mjs
+  // plugins/naraflows/shared/routing.mjs
   var SIDES = ["top", "right", "bottom", "left"];
   var vectors = { top: [0, -1], right: [1, 0], bottom: [0, 1], left: [-1, 0] };
   var fail = (code, message) => Object.assign(Error(message), { code });
@@ -359,7 +359,7 @@ var NaraModelAudit = (() => {
     return { waypoints: best.points, routing: { mode: "orthogonal", manual: false, anchorPolicy: { source: sourceSide === "auto" ? "auto" : "fixed", target: targetSide === "auto" ? "auto" : "fixed" }, source: { side: best.pair.ss, offset: sourceOffset }, target: { side: best.pair.ts, offset: targetOffset } }, metrics, warnings };
   }
 
-  // plugins/narabizagui/shared/quality.mjs
+  // plugins/naraflows/shared/quality.mjs
   var activity = (e) => /Task$/.test(e.type) || e.type === "bpmn:CallActivity" || e.type === "bpmn:SubProcess" && e.expanded !== true;
   function reviewVisualQuality(snapshot, { elementIds, maxIssues = 200 } = {}) {
     const elements = snapshot.elements || [], index = new Map(elements.map((e) => [e.id, e])), scope = elementIds ? new Set(elementIds) : null, issues = [];
@@ -466,7 +466,7 @@ var NaraModelAudit = (() => {
     return { ok: total === 0, complete: missingText.length === 0 && !snapshot.elementsTruncated && !snapshot.elementsFiltered && total <= maxIssues, scope: scope ? "affected-elements" : "active-sheet", elementIds: scope ? [...scope] : void 0, issues, totalIssues: total, coverage: { missingRenderedText: missingText }, businessApproval: false };
   }
 
-  // plugins/narabizagui/shared/connection-editing.mjs
+  // plugins/naraflows/shared/connection-editing.mjs
   var fail2 = (code, message) => Object.assign(Error(message), { code });
   function projectRoute(points, point) {
     let best;
@@ -604,7 +604,7 @@ var NaraModelAudit = (() => {
     }));
   }
 
-  // plugins/narabizagui/shared/layout.mjs
+  // plugins/naraflows/shared/layout.mjs
   function planContainerFit(snapshot, elementId, { padding = 40 } = {}) {
     const elements = snapshot.elements || [], index = new Map(elements.map((e) => [e.id, e])), container = index.get(elementId);
     const fail3 = (message) => {
@@ -629,7 +629,7 @@ var NaraModelAudit = (() => {
     return { type: "resize", elementId, x: container.x, y: container.y, width: Math.min(container.width, Math.max(300, right - container.x + padding)), height: hasLanes ? container.height : Math.min(container.height, Math.max(140, bottom - container.y + padding)), autoResize: false };
   }
 
-  // plugins/narabizagui/shared/audit.mjs
+  // plugins/naraflows/shared/audit.mjs
   var containers = /* @__PURE__ */ new Set(["bpmn:Participant", "bpmn:Lane", "bpmn:Group", "bpmn:TextAnnotation", "bpmn:Collaboration", "bpmn:Process"]);
   var conditional = /* @__PURE__ */ new Set(["bpmn:ExclusiveGateway", "bpmn:InclusiveGateway", "bpmn:ComplexGateway"]);
   function validateSnapshot(snapshot, { profile = "review", geometry = true, maxIssues = 200 } = {}) {

@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {routeOrthogonal,routeMetrics,anchorPolicy} from '../plugins/narabizagui/shared/routing.mjs';
-import {planMovedRoutes,planReconnectPreview} from '../plugins/narabizagui/shared/connection-editing.mjs';
-import {reviewVisualQuality} from '../plugins/narabizagui/shared/quality.mjs';
+import {routeOrthogonal,routeMetrics,anchorPolicy} from '../plugins/naraflows/shared/routing.mjs';
+import {planMovedRoutes,planReconnectPreview} from '../plugins/naraflows/shared/connection-editing.mjs';
+import {reviewVisualQuality} from '../plugins/naraflows/shared/quality.mjs';
 const a={id:'A',type:'bpmn:Task',x:590,y:490,width:260,height:100},b={...a,id:'B',x:270};
 const bad=[{x:850,y:540},{x:860,y:540},{x:850,y:540},{x:850,y:590},{x:590,y:590},{x:590,y:540},{x:530,y:540}];
 const legacy={mode:'orthogonal',source:{side:'right',offset:.5},target:{side:'right',offset:.5}};

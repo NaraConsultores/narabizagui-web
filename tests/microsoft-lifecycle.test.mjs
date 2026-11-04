@@ -4,7 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {MicrosoftFiles,MAX_BYTES} from '../microsoft-files.js';
 import {MicrosoftWorkspace} from '../scripts/microsoft-workspace.js';
 import {MicrosoftFileLifecycle} from '../microsoft-lifecycle.js';
-import {MICROSOFT_FILE_TOOLS} from '../plugins/narabizagui/shared/microsoft-files.mjs';
+import {MICROSOFT_FILE_TOOLS} from '../plugins/naraflows/shared/microsoft-files.mjs';
 
 export const XML='<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" id="QA"><process id="GenericProcess"/></definitions>';
 export function fixture(){

@@ -5,8 +5,8 @@ import { createHash } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
-import * as audit from '../plugins/narabizagui/shared/audit.mjs';
-import { bpmnArtifact } from '../plugins/narabizagui/server/bpmn-file.mjs';
+import * as audit from '../plugins/naraflows/shared/audit.mjs';
+import { bpmnArtifact } from '../plugins/naraflows/server/bpmn-file.mjs';
 
 const sources = await Promise.all(['editor-structure.js', 'editor-operations.js'].map(name => readFile(new URL('../' + name, import.meta.url), 'utf8')));
 const sizes = { 'bpmn:StartEvent': [36, 36], 'bpmn:EndEvent': [36, 36], 'bpmn:ExclusiveGateway': [50, 50], 'bpmn:ParallelGateway': [50, 50], 'bpmn:Participant': [600, 250] };
@@ -119,7 +119,7 @@ test('clear reports the previous identity when bpmn-js has to replace the sheet 
 });
 
 test('export_bpmn writes the complete XML to a temporary file with its hash instead of returning it', async t => {
-  const directory = await mkdtemp(path.join(os.tmpdir(), 'narabizagui-export-test-'));
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'naraflows-export-test-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
   const xml = '<?xml version="1.0"?><bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" id="Defs"/>', sha256 = createHash('sha256').update(xml).digest('hex');
   const state = { revision: 'r7', sha256, xml, fileName: 'Proceso genérico.bpmn', activeSheetId: 'Collaboration_Generic', sheets: [{ id: 'Collaboration_Generic', name: 'Hoja genérica', kind: 'process', processId: 'Process_1', elementId: 'ignored' }] };

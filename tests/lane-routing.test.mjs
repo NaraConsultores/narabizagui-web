@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {laneBoundaries,laneRouteConflicts,LANE_BORDER_CLEARANCE} from '../plugins/narabizagui/shared/lane-routing.mjs';
-import {routeOrthogonal} from '../plugins/narabizagui/shared/routing.mjs';
-import {planMovedRoutes,planReconnectPreview} from '../plugins/narabizagui/shared/connection-editing.mjs';
-import {reviewVisualQuality} from '../plugins/narabizagui/shared/quality.mjs';
+import {laneBoundaries,laneRouteConflicts,LANE_BORDER_CLEARANCE} from '../plugins/naraflows/shared/lane-routing.mjs';
+import {routeOrthogonal} from '../plugins/naraflows/shared/routing.mjs';
+import {planMovedRoutes,planReconnectPreview} from '../plugins/naraflows/shared/connection-editing.mjs';
+import {reviewVisualQuality} from '../plugins/naraflows/shared/quality.mjs';
 function parallelSplit(){
  const pool={id:'Pool',type:'bpmn:Participant',x:0,y:0,width:1100,height:800},upper={id:'Upper',type:'bpmn:Lane',parentId:'Pool',x:30,y:0,width:1070,height:400},lower={...upper,id:'Lower',y:400};
  const gate={id:'Split',type:'bpmn:ParallelGateway',parentId:'Upper',x:200,y:250,width:50,height:50},a={id:'A',type:'bpmn:Task',parentId:'Lower',x:500,y:500,width:100,height:80},b={...a,id:'B',x:800},obstacle={id:'Other',type:'bpmn:Task',parentId:'Upper',x:350,y:200,width:100,height:190};

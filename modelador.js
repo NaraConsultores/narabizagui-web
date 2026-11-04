@@ -45,8 +45,8 @@ const modeler = new BpmnJS({
 });
 window.bpmnModeler = modeler;
 const semanticProperties = window.NaraBpmnProperties.mount(modeler, byId('semanticFields'), () => basePropertyDraftPending());
-window.NaraAppVersion = '0.11.5';
-window.NaraAppBuild = document.querySelector('meta[name=narabizagui-build]')?.content || 'unknown';
+window.NaraAppVersion = '0.12.0';
+window.NaraAppBuild = document.querySelector('meta[name=naraflows-build]')?.content || 'unknown';
 window.diagramReady = false;
 window.diagramError = null;
 // Agrupa los cambios nativos para poder deshacer toda la columna en un paso.
@@ -183,7 +183,7 @@ function updateProjectContext() {
   byId('diagramTitle').textContent = activeDiagram.title;
   byId('projectName').textContent = project.name;
   byId('diagramTitle').title = 'Proceso: ' + activeDiagram.title;
-  document.title = activeDiagram.title + ' · NaraBizagui by NaraLab';
+  document.title = activeDiagram.title + ' · NaraFlows';
   byId('diagramSelect').value = activeDiagram.id;
 }
 async function loadProjectDiagram(id, allowDiscard = false) {
@@ -221,7 +221,7 @@ async function pollFile() {
   finally { filePolling = false; }
 }
 async function bootstrap() {
-  if (new URLSearchParams(location.search).get('modo')==='archivos' || document.querySelector('meta[name="narabizagui-mode"]')?.content==='browser') {await startStandalone();return;}
+  if (new URLSearchParams(location.search).get('modo')==='archivos' || document.querySelector('meta[name="naraflows-mode"]')?.content==='browser') {await startStandalone();return;}
   // En alojamiento estático no hay API ni catálogo de documentos del cliente.
   const health=await fetch('/api/health',{cache:'no-store'}).catch(()=>null);
   if (!health?.ok || !(health.headers.get('content-type')||'').includes('application/json')) {await startStandalone();return;}
@@ -238,7 +238,7 @@ function browserFileContext(name) {
   const microsoft = browserFiles.handle?.storageKind === 'microsoft';
   if(syncNoticeHandle&&syncNoticeHandle!==browserFiles.handle){byId('syncNotice').hidden=true;syncNoticeHandle=null;}
   byId('projectName').textContent=microsoft ? 'Microsoft' : 'Archivo';byId('diagramTitle').textContent=name;byId('diagramTitle').title=name;
-  document.title=name+' · NaraBizagui by NaraLab';
+  document.title=name+' · NaraFlows';
   byId('diagramSelect').hidden=true;byId('reloadDiagram').disabled=!browserFiles.handle;
   byId('fileModeHint').textContent=microsoft ? 'Los cambios se guardan en Microsoft. Exportar BPMN descarga una copia local.' : 'Los cambios se guardan en el archivo autorizado. Guardar como elige otro destino.';
   window.naraAutoSave?.refresh();

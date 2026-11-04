@@ -1,4 +1,4 @@
-NaraBizagui native sheet importer — bundled third-party licenses.
+NaraFlows native sheet importer — bundled third-party licenses.
 
 
 --- bpmn-js@18.16.0 (SEE LICENSE IN LICENSE) ---

@@ -1,7 +1,7 @@
 'use strict';
 (() => {
   const { auth, files: cloud, workspace } = window.NaraMicrosoft.create();
-  if(window.NaraBizaguiEditor?.fileAdapter&&window.NaraMicrosoft.FileLifecycle)window.NaraMicrosoftFiles = new window.NaraMicrosoft.FileLifecycle({auth,files:cloud,workspace,editor:window.NaraBizaguiEditor.fileAdapter});
+  if(window.NaraFlowsEditor?.fileAdapter&&window.NaraMicrosoft.FileLifecycle)window.NaraMicrosoftFiles = new window.NaraMicrosoft.FileLifecycle({auth,files:cloud,workspace,editor:window.NaraFlowsEditor.fileAdapter});
   const dialog = byId('microsoftDialog'), list = byId('msFileList');
   let mode = 'open', provider = 'onedrive', folder = null, parents = [], nextLink = null;
   let listingId = 0, busy = false, selected = null, restoring = true, recentView = false, resumeCancelled = false;

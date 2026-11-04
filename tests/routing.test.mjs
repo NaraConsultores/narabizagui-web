@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {routeOrthogonal,anchorPoint,routeMetrics,simplifyOrthogonal,orthogonalizeWaypoints as normalizeWaypoints} from '../plugins/narabizagui/shared/routing.mjs';
+import {routeOrthogonal,anchorPoint,routeMetrics,simplifyOrthogonal,orthogonalizeWaypoints as normalizeWaypoints} from '../plugins/naraflows/shared/routing.mjs';
 import vm from 'node:vm';
 import {readFile} from 'node:fs/promises';
 const context={window:{NaraModelAudit:{simplifyOrthogonal,orthogonalizeWaypoints:normalizeWaypoints}}};vm.runInNewContext(await readFile(new URL('../editor-visual.js',import.meta.url),'utf8'),context);
 const orthogonalizeWaypoints=(...args)=>JSON.parse(JSON.stringify(context.window.NaraVisual.orthogonalizeWaypoints(...args)));
-import {lineHitsBox} from '../plugins/narabizagui/shared/geometry.mjs';
+import {lineHitsBox} from '../plugins/naraflows/shared/geometry.mjs';
 const source={id:'Task',type:'bpmn:Task',x:200,y:180,width:100,height:80},target={id:'Document',type:'bpmn:DataObjectReference',x:480,y:390,width:36,height:50};
 const flow={id:'Output',type:'bpmn:Association',sourceId:source.id,targetId:target.id,waypoints:[{x:300,y:220},{x:310,y:220},{x:310,y:250},{x:400,y:250},{x:400,y:415},{x:480,y:415}]};
 const snapshot=(extra=[])=>({elements:[structuredClone(source),structuredClone(target),structuredClone(flow),...extra]});

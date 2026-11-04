@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile, unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
-import { pngArtifact } from '../plugins/narabizagui/server/png.mjs';
+import { pngArtifact } from '../plugins/naraflows/server/png.mjs';
 
 test('PNG export returns a viewable MCP image and a unique, matching report artifact', async () => {
   const pngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aNf8AAAAASUVORK5CYII=';

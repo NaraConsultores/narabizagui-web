@@ -9,9 +9,9 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 const root = path.resolve(import.meta.dirname, '..');
 const manifest = JSON.parse(await readFile(path.join(root, 'manifest.json'), 'utf8'));
 const key = randomBytes(32).toString('hex');
-const client = new Client({ name: 'narabizagui-browser-qa', version: '1.0.0' });
-await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'plugins/narabizagui/server/dist/server.mjs')], stderr: 'inherit' }));
-const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.woff2': 'font/woff2', '.txt': 'text/plain' };
+const client = new Client({ name: 'naraflows-browser-qa', version: '1.0.0' });
+await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'plugins/naraflows/server/dist/server.mjs')], stderr: 'inherit' }));
+const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.txt': 'text/plain' };
 const server = http.createServer(async (req, res) => {
   try {
     if (req.headers.host !== `127.0.0.1:${server.address().port}` || req.headers.origin || req.headers['x-qa-key'] !== key) { res.writeHead(403); res.end(); return; }

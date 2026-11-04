@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateSnapshot, compareSnapshots, planOperations, segmentContact, lineHitsBox } from '../plugins/narabizagui/shared/audit.mjs';
+import { validateSnapshot, compareSnapshots, planOperations, segmentContact, lineHitsBox } from '../plugins/naraflows/shared/audit.mjs';
 const point=(x,y)=>({x,y}), flow=(id,waypoints,sourceId,targetId)=>({id,type:'bpmn:SequenceFlow',waypoints,sourceId,targetId}), node=(id,x,y)=>({id,type:'bpmn:Task',x,y,width:40,height:40,flowScopeId:'Process'});
 test('geometry reports IDs for object hits, intersections, overlap and bend contacts',()=>{
  const elements=[node('A',0,0),node('B',200,0),node('Obstacle',90,0),flow('Across',[point(40,20),point(200,20)],'A','B'),flow('Vertical',[point(100,-40),point(100,100)]),flow('Bend',[point(160,80),point(160,20),point(190,20)])];

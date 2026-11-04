@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {reviewVisualQuality} from '../plugins/narabizagui/shared/quality.mjs';
+import {reviewVisualQuality} from '../plugins/naraflows/shared/quality.mjs';
 const task={id:'T',type:'bpmn:UserTask',name:'Review request',x:100,y:100,width:180,height:100,parentId:'Lane',textLayout:{rendered:true,fits:true,contentPreserved:true,fontSize:16,bounds:{x:140,y:120,width:120,height:40},markerBounds:[{x:108,y:108,width:20,height:22}]}};
 test('a narrow pool cannot hide wider lanes from incremental visual quality',()=>{
  const r=reviewVisualQuality({elements:[{id:'P',type:'bpmn:Participant',x:0,y:0,width:500,height:300},{id:'L',type:'bpmn:Lane',parentId:'P',x:30,y:0,width:900,height:300}]},{elementIds:['P']});assert.ok(r.issues.some(i=>i.code==='LANE_OUTSIDE_PARTICIPANT'));assert.equal(r.ok,false);

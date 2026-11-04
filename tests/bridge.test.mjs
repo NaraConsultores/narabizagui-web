@@ -6,7 +6,7 @@ import path from 'node:path';
 import http from 'node:http';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { startBridge, VERSION } from '../plugins/narabizagui/server/bridge.mjs';
+import { startBridge, VERSION } from '../plugins/naraflows/server/bridge.mjs';
 
 const origin = 'https://demo.naraconsultores.com';
 async function post(port, route, data, token, extra = {}) {
@@ -77,7 +77,7 @@ test('batch timing separates bridge transport from editor measurements',async t=
 test('bundled plugin starts outside the checkout without npm install and serves real MCP', async t => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'narabizagui-plugin-'));
   const plugin = path.join(dir, 'plugin');
-  await cp(new URL('../plugins/narabizagui/', import.meta.url), plugin, { recursive: true });
+  await cp(new URL('../plugins/naraflows/', import.meta.url), plugin, { recursive: true });
   const transport = new StdioClientTransport({ command: process.execPath, args: [path.join(plugin, 'server/dist/server.mjs')], cwd: dir, stderr: 'pipe' });
   const client = new Client({ name: 'narabizagui-qa', version: '1.0.0' });
   t.after(async () => {
@@ -88,34 +88,34 @@ test('bundled plugin starts outside the checkout without npm install and serves 
   await client.connect(transport);
   const discovered = (await client.listTools()).tools;
   assert.equal(discovered.length, 17);
-  for (const suffix of ['status','resolve','list','create','open','attach','autosave']) assert.ok(discovered.some(tool=>tool.name==='narabizagui_microsoft_'+suffix));
-  const editSchema=JSON.stringify(discovered.find(tool=>tool.name==='narabizagui_edit').inputSchema);
+  for (const suffix of ['status','resolve','list','create','open','attach','autosave']) assert.ok(discovered.some(tool=>tool.name==='naraflows_microsoft_'+suffix));
+  const editSchema=JSON.stringify(discovered.find(tool=>tool.name==='naraflows_edit').inputSchema);
   for(const operation of ['matrix','clear','fit','lane_split','lane_add','style','delete','fit_text','route_orthogonal','share_connection','compact_container'])assert.ok(editSchema.includes('"'+operation+'"'),'Missing structural operation '+operation);
-  assert.ok(JSON.stringify(discovered.find(tool=>tool.name==='narabizagui_read').inputSchema).includes('summary'));
-  assert.ok(discovered.some(tool=>tool.name==='narabizagui_validate'));
-  assert.ok(discovered.some(tool=>tool.name==='narabizagui_edit_batch'));
-  const editInput=discovered.find(tool=>tool.name==='narabizagui_edit').inputSchema;assert.deepEqual(editInput.properties.response.enum,['full','summary']);
+  assert.ok(JSON.stringify(discovered.find(tool=>tool.name==='naraflows_read').inputSchema).includes('summary'));
+  assert.ok(discovered.some(tool=>tool.name==='naraflows_validate'));
+  assert.ok(discovered.some(tool=>tool.name==='naraflows_edit_batch'));
+  const editInput=discovered.find(tool=>tool.name==='naraflows_edit').inputSchema;assert.deepEqual(editInput.properties.response.enum,['full','summary']);
   for(const field of ['activitySize','"label"','"height"'])assert.ok(editSchema.includes(field),'Missing matrix field '+field);
-  assert.ok(JSON.stringify(discovered.find(tool=>tool.name==='narabizagui_export_bpmn').inputSchema).includes('expectedRevision'));
-  const connection = (await client.callTool({ name: 'narabizagui_connect', arguments: {} })).structuredContent;
+  assert.ok(JSON.stringify(discovered.find(tool=>tool.name==='naraflows_export_bpmn').inputSchema).includes('expectedRevision'));
+  const connection = (await client.callTool({ name: 'naraflows_connect', arguments: {} })).structuredContent;
   assert.equal(connection.toolContract,'visual-quality-v1');assert.equal(connection.serverVersion,VERSION);
   const [port, code] = connection.pairingCode.split('.');
   const paired = await (await post(port, '/pair', { code })).json();
-  const sessions = (await client.callTool({ name: 'narabizagui_sessions', arguments: {} })).structuredContent.sessions;
+  const sessions = (await client.callTool({ name: 'naraflows_sessions', arguments: {} })).structuredContent.sessions;
   assert.equal(sessions[0].sessionId, paired.sessionId);
-  const pending = client.callTool({ name: 'narabizagui_read', arguments: { sessionId: paired.sessionId } });
+  const pending = client.callTool({ name: 'naraflows_read', arguments: { sessionId: paired.sessionId } });
   const poll = await (await post(port, `/sessions/${paired.sessionId}/poll`, {}, paired.sessionToken)).json();
   await post(port, `/sessions/${paired.sessionId}/result`, { commandId: poll.command.id, result: { revision: 'test', dirty: false } }, paired.sessionToken);
   assert.equal((await pending).structuredContent.revision, 'test');
-  const autoSession=client.callTool({name:'narabizagui_read',arguments:{waitForReadyMs:0}});
+  const autoSession=client.callTool({name:'naraflows_read',arguments:{waitForReadyMs:0}});
   const autoPoll=await(await post(port,`/sessions/${paired.sessionId}/poll`,{},paired.sessionToken)).json();
   assert.equal(autoPoll.command.args.detail,'summary');
   await post(port,`/sessions/${paired.sessionId}/result`,{commandId:autoPoll.command.id,result:{revision:'auto',documentReady:true}},paired.sessionToken);
   assert.equal((await autoSession).structuredContent.sessionId,paired.sessionId);
-  const nextConnection=(await client.callTool({name:'narabizagui_connect',arguments:{}})).structuredContent;
+  const nextConnection=(await client.callTool({name:'naraflows_connect',arguments:{}})).structuredContent;
   const [nextPort,nextCode]=nextConnection.pairingCode.split('.');await post(nextPort,'/pair',{code:nextCode});
-  const ambiguous=await client.callTool({name:'narabizagui_read',arguments:{}});assert.equal(ambiguous.isError,true);assert.equal(JSON.parse(ambiguous.content[0].text).code,'AMBIGUOUS_SESSION');
-  const bad = await client.callTool({ name: 'narabizagui_edit', arguments: { sessionId: paired.sessionId, operation: { type: 'delete', elementId: 'x' } } });
+  const ambiguous=await client.callTool({name:'naraflows_read',arguments:{}});assert.equal(ambiguous.isError,true);assert.equal(JSON.parse(ambiguous.content[0].text).code,'AMBIGUOUS_SESSION');
+  const bad = await client.callTool({ name: 'naraflows_edit', arguments: { sessionId: paired.sessionId, operation: { type: 'delete', elementId: 'x' } } });
   assert.equal(bad.isError, true, 'An edit without a base revision must be rejected by the MCP schema');
 });
 

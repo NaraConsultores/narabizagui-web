@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
-import { startBridge } from '../plugins/narabizagui/server/bridge.mjs';
+import { startBridge } from '../plugins/naraflows/server/bridge.mjs';
 
 const source = await readFile(new URL('../mcp-bridge.js', import.meta.url), 'utf8');
 const origin = 'https://demo.naraconsultores.com';
@@ -22,11 +22,11 @@ function openTab({ storage, hash = '', revision = 'r1', temporaryFailures = 0,re
   get('diagramTitle').textContent = 'Generic test.bpmn';
   const context = {
     document: { getElementById: get }, sessionStorage: storage,
-    location: { hash, pathname: '/NaraBizagui/', search: '' },
+    location: { hash, pathname: '/NaraFlows/', search: '' },
     history: { replaceState() {} }, AbortController, AbortSignal, URLSearchParams,
     setTimeout: fn => setTimeout(fn, 0),
     window: { addEventListener: (type, callback) => events.set(type, callback),
-      NaraBizaguiEditor: { async read() { stats.reads++;if(readError)throw readError;return { revision }; } } },
+      NaraFlowsEditor: { async read() { stats.reads++;if(readError)throw readError;return { revision }; } } },
     async fetch(url, options) {
       calls.push(new URL(url).pathname);
       if (String(url).endsWith('/poll') && temporaryFailures-- > 0) { stats.failures++; throw new TypeError('Temporary network interruption'); }

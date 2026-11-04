@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "naraflows": {
+      "command": "node",
+      "args": ["${PLUGIN_ROOT}/server/dist/server.mjs"],
+      "cwd": "${PLUGIN_ROOT}"
+    }
+  }
+}
