@@ -1,6 +1,6 @@
 {
   "name": "naraflows",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Cuatro skills y MCP local para modelar, validar y entregar BPMN/ER con propiedades semánticas, bloques seguros y PNG.",
   "author": {
     "name": "Nara Consultores"
