@@ -1,6 +1,8 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const manifest = JSON.parse(await readFile(new URL('../manifest.json', import.meta.url), 'utf8'));
+const digest = bytes => createHash('sha256').update(bytes).digest('hex');
+const redirectHash = digest(await readFile(new URL('./legacy-redirect.html', import.meta.url)));
 const revision = process.argv[2];
 const site = 'https://demo.naraconsultores.com';
 const routes = await Promise.all(['NaraFlows', 'NaraBizagui'].map(async route => {
@@ -13,13 +15,14 @@ const routes = await Promise.all(['NaraFlows', 'NaraBizagui'].map(async route =>
   const published = JSON.parse(await read('publication.json'));
   const remoteManifest = JSON.parse(await read('manifest.json'));
   const entries = Object.entries(published.files);
-  const manifestMatches = Object.keys(remoteManifest).length === Object.keys(manifest).length &&
-    Object.entries(manifest).every(([file, hash]) => remoteManifest[file] === hash && published.files[file] === hash);
+  const expected = route === 'NaraBizagui' ? { ...manifest, 'index.html': redirectHash } : manifest;
+  const manifestMatches = Object.keys(remoteManifest).length === Object.keys(expected).length &&
+    Object.entries(expected).every(([file, hash]) => remoteManifest[file] === hash && published.files[file] === hash);
   const resources = [];
   for (let i = 0; i < entries.length; i += 8) {
     resources.push(...await Promise.all(entries.slice(i, i + 8).map(async ([file, expected]) => {
       if (!/^(?:[\w.-]+\/)*[\w.-]+$/.test(file) || file.split('/').includes('..')) throw new Error('Unsafe publication path');
-      const actual = createHash('sha256').update(await read(file)).digest('hex');
+      const actual = digest(await read(file));
       return { file, matches: actual === expected };
     })));
   }

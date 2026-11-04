@@ -1,4 +1,4 @@
-// Export the editor at its canonical and compatibility paths on the same origin.
+// Export the editor and the legacy redirect without moving the registered Microsoft callback.
 import { execFileSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -43,21 +43,31 @@ for (const file of files) {
 for (const file of Object.keys(manifest)) {
   if (!hashes[file]) throw new Error(`Missing distributed asset: ${file}`);
 }
-const publication = JSON.stringify({
-  source: 'https://github.com/NaraConsultores/naraflows-web',
-  commit: revision,
-  url: 'https://demo.naraconsultores.com/NaraFlows/',
-  compatibilityUrl: 'https://demo.naraconsultores.com/NaraBizagui/',
-  files: hashes,
-}, null, 2) + '\n';
-for (const directory of output) {
-  for (const [file, bytes] of assets) {
+for (const [i, directory] of output.entries()) {
+  const routeAssets = new Map(assets);
+  const routeHashes = { ...hashes };
+  if (routes[i] === 'NaraBizagui') {
+    // Existing auth and cached editor resources remain available on the legacy path.
+    const redirect = git(root, 'show', 'HEAD:scripts/legacy-redirect.html');
+    routeHashes['index.html'] = createHash('sha256').update(redirect).digest('hex');
+    const legacyManifest = Buffer.from(JSON.stringify({ ...manifest, 'index.html': routeHashes['index.html'] }, null, 2) + '\n');
+    routeHashes['manifest.json'] = createHash('sha256').update(legacyManifest).digest('hex');
+    routeAssets.set('index.html', redirect);
+    routeAssets.set('manifest.json', legacyManifest);
+  }
+  for (const [file, bytes] of routeAssets) {
     const destination = path.join(directory, file);
     await mkdir(path.dirname(destination), { recursive: true });
     await writeFile(destination, bytes);
   }
   await writeFile(path.join(directory, '.nojekyll'), '');
-  await writeFile(path.join(directory, 'publication.json'), publication);
+  await writeFile(path.join(directory, 'publication.json'), JSON.stringify({
+    source: 'https://github.com/NaraConsultores/naraflows-web',
+    commit: revision,
+    url: 'https://demo.naraconsultores.com/NaraFlows/',
+    compatibilityUrl: 'https://demo.naraconsultores.com/NaraBizagui/',
+    files: routeHashes,
+  }, null, 2) + '\n');
 }
 console.log(JSON.stringify({ status: 'EXPORTED', files: files.length, manifestAssets: Object.keys(manifest).length, revision, output }));
 console.log('Review and commit only NaraFlows/ and NaraBizagui/ in the publication repository, then push main.');

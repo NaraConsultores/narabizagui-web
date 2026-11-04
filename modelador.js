@@ -45,7 +45,7 @@ const modeler = new BpmnJS({
 });
 window.bpmnModeler = modeler;
 const semanticProperties = window.NaraBpmnProperties.mount(modeler, byId('semanticFields'), () => basePropertyDraftPending());
-window.NaraAppVersion = '0.12.1';
+window.NaraAppVersion = '0.12.2';
 window.NaraAppBuild = document.querySelector('meta[name=naraflows-build]')?.content || 'unknown';
 window.diagramReady = false;
 window.diagramError = null;
